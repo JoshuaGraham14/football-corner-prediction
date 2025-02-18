@@ -1,0 +1,20 @@
+# Ignore the virtual environment
+venv/
+
+# Ignore dataset files (handled by DVC)
+data/**/*.csv
+!data/**/*.csv.dvc
+
+# Ignore Jupyter notebook checkpoints
+__pycache__/
+.ipynb_checkpoints/
+
+# Ignore system/macOS files
+.DS_Store
+
+# Ignore logs and cache
+logs/
+*.log
+
+# Ignore VS Code settings
+.vscode/
