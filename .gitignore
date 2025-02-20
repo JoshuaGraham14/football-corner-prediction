@@ -1,6 +1,9 @@
 # Ignore the virtual environment
 venv/
 
+#Environemnt variables
+.env
+
 # Ignore dataset files (handled by DVC)
 data/**/*.csv
 
