@@ -15,7 +15,7 @@ def load_config(config_file="config.yaml"):
 
     #Ensure optimise_hyperparameters is always set :
     config["model"]["binary"].setdefault("optimise_hyperparameters", False)
-    config["model"]["continuous"].setdefault("grid_optimise_hyperparameterssearch", False)
+    config["model"]["continuous"].setdefault("optimise_hyperparameters", False)
 
     #fill missing hyperparameters with defaults...
     for model_type in ["binary", "continuous"]:
