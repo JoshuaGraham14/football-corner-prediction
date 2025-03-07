@@ -3,7 +3,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import pandas as pd
-from betting_pipeline.config_loader import load_config
+import numpy as np
+from feature_engineering.config_loader import load_config
 
 def calc_home_urgency(df):
     """
@@ -39,12 +40,12 @@ def calc_away_urgency(df):
         urgency.append(round(u,3))
     return urgency
 
-def construct_features(df):
+def construct_features(df, selected_constructed_features):
     """
     Constructucts features dynamically based on config:
     """
-    config = load_config()
-    selected_constructed_features = config["features"]["constructed_features"]
+    if not selected_constructed_features:
+        return df
 
     #dictionary mapping to calc each feature
     feature_operations = {
@@ -81,7 +82,7 @@ def construct_features(df):
         "attack_intensity": lambda df: (df["goal_diff_80"].abs()==1) * (df["total_shots_75_80"]+df["total_corners_75_80"]),
         "defensive_pressure":lambda df: df["total_fouls_75_80"]-df["total_fouls_70_75"]
     }
-
+    
     #Only aply features selected from config!
     for feature, operation in feature_operations.items():
         if feature in selected_constructed_features:
@@ -94,15 +95,32 @@ def prepare_final_dataframe(df):
     Selects relevant columns from the dataset for training dataset
     """
     config = load_config()
-    context_features = config["features"]["context_features"]
-    selected_features = config["features"]["selected_features"]
-    constructed_features = config["features"]["constructed_features"]
-    target_variables =config["features"]["target_variables"]
 
+    context_features = config.get("features",{}).get("context_features",[])
+    selected_features = config.get("features",{}).get("selected_features",[])
+    constructed_features = config.get("features",{}).get("constructed_features",[])
+    target_variables =config.get("features",{}).get("target_variables",[])
+
+    # Debug:
+    # print(f"context_features: {context_features}")
+    # print(f"selected_features: {selected_features}")
+    # print(f"constructed_features: {constructed_features}")
+    # print(f"target_variables: {target_variables}")
+
+    if constructed_features is None:
+        constructed_features = []
+    df=construct_features(df, constructed_features)
+    
     # Select only necessary columns
     selected_columns = context_features + selected_features + constructed_features + target_variables
     df = df[selected_columns]
-    return df
+
+    #Drop NaN and inf rows:
+    df = df.copy()
+    df.loc[:, :] = df.replace([np.inf, -np.inf], np.nan)
+    df = df.dropna()
+
+    return df, context_features, selected_features, constructed_features, target_variables
 
 def main():
     """
@@ -113,8 +131,8 @@ def main():
     file_path = "data/processed/aggregated_data.csv"
     df = pd.read_csv(file_path)
 
-    df=construct_features(df)
-    df_final=prepare_final_dataframe(df)
+    # df=construct_features(df)
+    df_final,_,_,_,_=prepare_final_dataframe(df)
 
     # Save it:
     df_final.to_csv("df_engineered.csv", index=False)
