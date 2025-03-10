@@ -66,15 +66,30 @@ features:
 model:
   classification:
     models: 
-      - "random_forest" #start jsut with random forest for now
+      - "random_forest"
+      - "logistic_regression"
+      - "svc"
+      - "xgboost"
     grid_search: false  #If true... it overrides hyperparameters
     hyperparameters:
       random_forest:
         bootstrap: True
-        # max_depth: 10
-        # min_samples_leaf: 1
-        # min_samples_split: 5
+        # max_depth: None
+        min_samples_leaf: 1
+        min_samples_split: 2
+        n_estimators: 200
+      logistic_regression:
+        solver: 'liblinear'
+        penalty: 'l2'
+        C: 1.0
+      svc:
+        C: 1.0
+        kernel: 'rbf'
+        gamma: 'scale'
+      xgboost:
         n_estimators: 100
+        max_depth: 6
+        learning_rate: 0.1
       # If a model is missing -> default settings will be used
 
   regression:
