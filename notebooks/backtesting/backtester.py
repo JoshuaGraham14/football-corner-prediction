@@ -47,7 +47,7 @@ class Backtester(Simulator):
         self.model_type = model_type
         self.fixed_bet_percent = fixed_bet_percent
 
-    def run(self):
+    def run(self, show_output=True):
         """
         Runs the backtesting simulation:
         - Goes through each row of the prediction dataset
@@ -77,10 +77,9 @@ class Backtester(Simulator):
             self.bankroll_history.append(self.bankroll)
 
         #Simulation over... -> print results and summaries
-        self.print_trade_summary()
-        output_str = self.print_summary()
-        # self.save_results("betting_results.csv")
-        backtesting_image_path = self.display_results()
+        self.print_trade_summary(show_output)
+        output_str = self.print_summary(show_output)
+        backtesting_image_path = self.display_results(show_output)
 
         return backtesting_image_path, output_str
 
@@ -101,7 +100,7 @@ class Backtester(Simulator):
         #Our stake is fraction of current bankroll (but also cap at 10% of bankroll)...
         return self.bankroll * min(kelly_fraction, 0.1)
 
-    def display_results(self):
+    def display_results(self, show_output=True):
         """
         Plots bankroll growth over time using bankroll_history list
         """
@@ -117,8 +116,11 @@ class Backtester(Simulator):
         # Save graph as an image
         backtesting_image_path = f"../reports/images/backtesting.png"
         plt.savefig(backtesting_image_path)
-
-        plt.show()
+        
+        if show_output:
+            plt.show()
+        else:
+            plt.close()
 
         return backtesting_image_path
 

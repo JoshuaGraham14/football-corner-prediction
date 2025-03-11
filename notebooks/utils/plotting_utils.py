@@ -11,7 +11,7 @@ import matplotlib.lines as mlines
 import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay
 
-def plot_correlation(df_selected, selected_features, constructed_features, target_variables):
+def plot_correlation(df_selected, selected_features, constructed_features, target_variables, show_output=True):
     #Corelation matrix:
     correlation_matrix = df_selected[selected_features + constructed_features + target_variables].corr()
     correlation_with_target = correlation_matrix[target_variables].drop(target_variables, axis=0)
@@ -29,12 +29,15 @@ def plot_correlation(df_selected, selected_features, constructed_features, targe
     # Save graph as an image
     feature_correlation_image_path = f"../reports/images/feature_correlation.png"
     plt.savefig(feature_correlation_image_path)
-
-    plt.show()
+    
+    if show_output:
+        plt.show()
+    else:
+        plt.close()
 
     return feature_correlation_image_path
 
-def plot_scatter(y_probs_final, y_test_final, optimal_threshold, model_name):
+def plot_scatter(y_probs_final, y_test_final, optimal_threshold, model_name, show_output=True):
     # Scatter plot: target vs predicted probabilities
     plt.figure(figsize=(12, 5))
     plt.scatter(range(len(y_probs_final)), y_probs_final,c=y_test_final,cmap='coolwarm',alpha=0.7,label='Predicted Probability')
@@ -49,9 +52,11 @@ def plot_scatter(y_probs_final, y_test_final, optimal_threshold, model_name):
     # Save graph as an image
     image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_scatter.png"
     plt.savefig(image_path)
-    # plt.close()
-
-    plt.show()
+    
+    if show_output:
+        plt.show()
+    else:
+        plt.close()
 
     return image_path #return path for use later in markdwon func
 
@@ -72,7 +77,7 @@ def plot_precision_recall_curve(precision, recall,pr_auc, model_name, ax):
     ax.set_title(f'Precision-Recall Curve - {model_name}')
     ax.legend(loc="lower left")
 
-def plot_roc_and_prc(fpr, tpr, roc_auc, precision,recall, pr_auc,model_name):
+def plot_roc_and_prc(fpr, tpr, roc_auc, precision,recall, pr_auc,model_name, show_output=True):
     #Plots ROC curve and Precision-recall side by side
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))  
     plot_roc_curve(fpr, tpr, roc_auc, model_name,ax1)
@@ -83,12 +88,15 @@ def plot_roc_and_prc(fpr, tpr, roc_auc, precision,recall, pr_auc,model_name):
     image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_roc_prc.png"
     plt.savefig(image_path)
     # plt.close()
-    
-    plt.show()
+
+    if show_output:
+        plt.show()
+    else:
+        plt.close()
 
     return image_path
 
-def plot_classification_report(optimal_model, X_val, y_val, X_test, y_test, model_name):
+def plot_classification_report(optimal_model, X_val, y_val, X_test, y_test, model_name, show_output=True):
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     #Plot for validation set:
@@ -105,6 +113,9 @@ def plot_classification_report(optimal_model, X_val, y_val, X_test, y_test, mode
     plt.savefig(image_path)
     # plt.close()
     
-    plt.show()
+    if show_output:
+        plt.show()
+    else:
+        plt.close()
 
     return image_path

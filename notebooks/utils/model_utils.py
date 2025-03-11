@@ -37,7 +37,7 @@ def initialise_model(model_name, hyperparameters):
     else:
         raise ValueError(f"Model, {model_name}, is not supported.")
     
-def grid_search(model_name, model, X_train, y_train):
+def grid_search(model_name, model, X_train, y_train, show_output=True):
     """
     Performs Grid Search for hyperparameter tuning depending on input model:
     """
@@ -76,8 +76,9 @@ def grid_search(model_name, model, X_train, y_train):
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring=precision_scorer, n_jobs=-1, verbose=2)
     grid_search.fit(X_train, y_train)
 
-    print("Best Parameters:", grid_search.best_params_)
-    print("Best Precision Score:", grid_search.best_score_)
+    if show_output:
+        print("Best Parameters:", grid_search.best_params_)
+        print("Best Precision Score:", grid_search.best_score_)
 
     #Use best_estimator for predictions
     best_model = grid_search.best_estimator_
@@ -118,7 +119,7 @@ def get_feature_importance(model, model_name, selected_features, constructed_fea
 
     return combined_features
 
-def optimise_threshold(y_pred_val, y_val):
+def optimise_threshold(y_pred_val, y_val, show_output=True):
     #--- Threshold Maximisation ---
     thresholds = np.linspace(0.5, 0.95, 20) #test thresholds from 0.5 to 0.95
     results = []
@@ -130,18 +131,20 @@ def optimise_threshold(y_pred_val, y_val):
         if recall_t>=0.1: #only take results where recall >= 0.1
             results.append((t, precision_t, recall_t))
 
-    #results as table
-    print("\n### Precision-Recall Tradeoff at Different Thresholds ###\n") 
-    print(f"{'Threshold':<12}{'Precision':<12}{'Recall':<12}") 
-    print("-"*36)  
-    for t, p, r in results:
-        print(f"{t:<12.2f}{p:<12.4f}{r:<12.4f}")
-    
     best_threshold = max(results, key=lambda x: x[1])
     optimal_threshold = round(best_threshold[0],3)
-    print("\n### Recommended Threshold for Maximum Precision ###")
-    print(f"Optimal Threshold: {optimal_threshold:.2f}")
-    print(f"Expected Precision: {best_threshold[1]:.4f}")
-    print(f"Expected Recall: {best_threshold[2]:.4f}")
+
+    if show_output:
+        #results as table
+        print("\n### Precision-Recall Tradeoff at Different Thresholds ###\n") 
+        print(f"{'Threshold':<12}{'Precision':<12}{'Recall':<12}") 
+        print("-"*36)  
+        for t, p, r in results:
+            print(f"{t:<12.2f}{p:<12.4f}{r:<12.4f}")
+
+        print("\n### Recommended Threshold for Maximum Precision ###")
+        print(f"Optimal Threshold: {optimal_threshold:.2f}")
+        print(f"Expected Precision: {best_threshold[1]:.4f}")
+        print(f"Expected Recall: {best_threshold[2]:.4f}")
 
     return best_threshold, optimal_threshold

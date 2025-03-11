@@ -40,17 +40,18 @@ class Simulator:
         print(f"📊 Results saved to {filename}") 
 
 
-    def print_trade_summary(self):
+    def print_trade_summary(self, show_output=True):
         """
         Shows summary of all bets placed
         """
-        print("\n📊 Betting Trade Summary:")
-        print(f"{'Match ID':<10} {'Odds':<10} {'Stake':<10} {'Profit':<10} {'Outcome':<10} {'Bank':<10}")
-        for row in self.history:
-            match_id, odds,stake,profit, outcome,bank =  row
-            print(f"{match_id:<10} {odds:<10.2f} {stake:<10.2f} {profit:<10.2f} {outcome:<10} {bank:<10.2f}")
+        if show_output:
+            print("\n📊 Betting Trade Summary:")
+            print(f"{'Match ID':<10} {'Odds':<10} {'Stake':<10} {'Profit':<10} {'Outcome':<10} {'Bank':<10}")
+            for row in self.history:
+                match_id, odds,stake,profit, outcome,bank =  row
+                print(f"{match_id:<10} {odds:<10.2f} {stake:<10.2f} {profit:<10.2f} {outcome:<10} {bank:<10.2f}")
 
-    def print_summary(self):
+    def print_summary(self, show_output=True):
         """
         Prints an overall performance summary:
         """
@@ -59,12 +60,13 @@ class Simulator:
         roi = (self.total_profit/total_staked)*100
         win_rate = (sum(1 for row in self.history if row[4]==1)/num_bets)*100
 
-        print("\n--- Overall Summary ---")
-        print(f"🏦 Initial Bankroll: £{self.initial_bankroll:.2f}")
-        print(f"💰 Final Bankroll: £{self.bankroll:.2f}")
-        print(f"📈 Total Profit: £{self.total_profit:.2f}")
-        print(f"📊 ROI: {roi:.2f}%")
-        print(f"✅ Win rate: {win_rate:.2f}% over {num_bets} bets\n")
+        if show_output:
+            print("\n--- Overall Summary ---")
+            print(f"🏦 Initial Bankroll: £{self.initial_bankroll:.2f}")
+            print(f"💰 Final Bankroll: £{self.bankroll:.2f}")
+            print(f"📈 Total Profit: £{self.total_profit:.2f}")
+            print(f"📊 ROI: {roi:.2f}%")
+            print(f"✅ Win rate: {win_rate:.2f}% over {num_bets} bets\n")
 
         #Output str to return for PDF report:
         output_str = f"""

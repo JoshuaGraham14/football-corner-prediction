@@ -11,7 +11,7 @@ features:
     - score_ft
     - game_state_80
   selected_features:  
-    - goal_diff_80
+    # - goal_diff_80
     # - home_shots_pre80
     # - away_shots_pre80
     # - home_fouls_pre80
@@ -57,11 +57,15 @@ features:
     - away_momentum_to_attack
     - attack_intensity
     - defensive_pressure
-  target_variables:
-    - home_corner_diff
-    - away_corner_diff
-    - corner_diff
+    - trailing_team_probability
+  target_variable:
     - target
+  # possible_target_variables:
+  #   - home_corner_diff
+  #   - away_corner_diff
+  #   - corner_diff
+  #   - target
+  #   - target2
 
 model:
   classification:

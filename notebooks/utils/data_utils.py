@@ -25,12 +25,13 @@ def preprocess_data(df, config):
     context_features = config.get("features",{}).get("context_features",[])
     selected_features = config.get("features",{}).get("selected_features",[])
     constructed_features = config.get("features",{}).get("constructed_features",[])
-    target_variables =config.get("features",{}).get("target_variables",[])
+    target_variable =config.get("features",{}).get("target_variable",[])
+    # possible_target_variables =config.get("features",{}).get("possible_target_variables",[])
 
     if constructed_features is None:
         constructed_features = []
 
-    selected_columns = context_features + selected_features + constructed_features + target_variables
+    selected_columns = context_features + selected_features + constructed_features + target_variable
     df = df[selected_columns]
 
     #Drop NaN and inf rows:
@@ -40,4 +41,4 @@ def preprocess_data(df, config):
 
     print(f"✅ Dataset Preprocessed: {df_selected.shape[0]} rows, {df_selected.shape[1]} columns")
 
-    return df_selected, selected_features, constructed_features, target_variables
+    return df_selected, selected_features, constructed_features, target_variable
