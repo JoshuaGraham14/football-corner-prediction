@@ -9,7 +9,7 @@ from difflib import SequenceMatcher
 #Load environment variables
 load_dotenv()
 
-API_TOKEN = os.getenv("API_TOKEN")
+TOTAL_CORNER_API_TOKEN = os.getenv("TOTAL_CORNER_API_TOKEN")
 BASE_URL = "https://api.totalcorner.com/v1"
 
 READ_FOLDER_PATH = '/data/processed/snippets/'
@@ -96,7 +96,7 @@ def fetch_match_schedule(date):
  
     while True: 
         print(f"Page={page}")
-        url = f"{BASE_URL}/match/schedule?token={API_TOKEN}&date={date_without_dashes}&page={page}"
+        url = f"{BASE_URL}/match/schedule?token={TOTAL_CORNER_API_TOKEN}&date={date_without_dashes}&page={page}"
         data = handle_api_request(url)
 
         if data is None:
@@ -182,14 +182,14 @@ for date in match_dict.keys():
     #Save matched results to CSV
     if match_ids: 
         match_id_df = pd.DataFrame(match_ids) 
-        file ="match_ids.csv" 
+        file ="data/external/match_ids.csv" 
         match_id_df.to_csv(file, mode='a',header=not os.path.exists(file),index=False) #use append rather than write, so more can be added in the future
         print(f"✅ Match ID fetching complete for {date}. Appended to match_ids.csv.")
 
     #Save unmatched results too...
     if unmatched_ids:
         unmatched_df = pd.DataFrame(unmatched_ids) 
-        file ="unmatched_matches.csv"
+        file ="data/external/unmatched_matches.csv"
         unmatched_df.to_csv(file, mode='a',header=not os.path.exists(file),index=False)
         print(f"⚠ Unmatched matches for {date} appended to unmatched_matches.csv.")
     else: 
@@ -223,5 +223,5 @@ for date in match_dict.keys():
 # team_mapping_template = {league: {team: "" for team in teams} for league, teams in sorted_team_names.items()}
 
 # # Save to a JSON file
-# with open("team_name_mapping.json", "w") as f:
+# with open("data/external/team_name_mapping.json", "w") as f:
 #     json.dump(team_mapping_template, f, indent=4)

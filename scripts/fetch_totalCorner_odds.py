@@ -5,11 +5,11 @@ import time
 
 from api_handler import handle_api_request
 
-API_TOKEN = os.getenv("API_TOKEN")
+TOTAL_CORNER_API_TOKEN = os.getenv("TOTAL_CORNER_API_TOKEN")
 BASE_URL = "https://api.totalcorner.com/v1"
 
 def fetch_total_corner_data(match_id):
-    url = f"{BASE_URL}/match/odds/{match_id}?token={API_TOKEN}&columns=cornerList"
+    url = f"{BASE_URL}/match/odds/{match_id}?token={TOTAL_CORNER_API_TOKEN}&columns=cornerList"
     data =handle_api_request(url) #use my handle_api_request func
 
     #check for api errors
@@ -67,11 +67,11 @@ def odds_1_plus_corner(expected_total, current_corners):
 
 
 #----- MAIN -----
-OUTPUT_FILE = "totalCorner_odds.csv"
+OUTPUT_FILE = "data/external/totalCorner_odds.csv"
 
 #Read match_ids.csv
 print("Loading match_ids.csv...")
-match_ids_df = pd.read_csv("match_ids.csv")
+match_ids_df = pd.read_csv("data/external/match_ids.csv")
 print(f"✅ Loaded {len(match_ids_df)} match IDs")
 
 match_count=len(match_ids_df)

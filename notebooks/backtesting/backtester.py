@@ -1,11 +1,17 @@
+import os
+import sys
+import yaml
+# Set project root
+project_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
+sys.path.append(project_root)
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 from simulator import Simulator
-import os
 
 class Backtester(Simulator):
-    def __init__(self, odds_file="totalCorner_odds.csv", model_file=None, bankroll=1000,model_type="classification",fixed_bet_percent=0.02):
+    def __init__(self, config, odds_file, model_file=None, model_type="classification"):
         """
         Initialise backtester:
         - odds_file = csv containing historical odds (this file is always used)
@@ -13,6 +19,10 @@ class Backtester(Simulator):
         - bankroll = starting credit
         - model_type = classification or "regression"
         """
+        #Get data from config
+        bankroll = int(config["backtesting"]["initial_bankroll"])
+        fixed_bet_percent = float(config["backtesting"]["fixed_bet_percent"])
+
         super().__init__(bankroll) #init parent Simulator class
         
         #Load historical odds 
@@ -68,9 +78,11 @@ class Backtester(Simulator):
 
         #Simulation over... -> print results and summaries
         self.print_trade_summary()
-        self.print_summary()
+        output_str = self.print_summary()
         # self.save_results("betting_results.csv")
-        self.display_results()
+        backtesting_image_path = self.display_results()
+
+        return backtesting_image_path, output_str
 
     def get_fixed_bet_size(self):
         """
@@ -101,11 +113,18 @@ class Backtester(Simulator):
         plt.ylabel("Bankroll (£)")
         plt.legend()
         plt.grid(True)
+
+        # Save graph as an image
+        backtesting_image_path = f"../reports/images/backtesting.png"
+        plt.savefig(backtesting_image_path)
+
         plt.show()
 
+        return backtesting_image_path
+
 #Classification model:
-backtester = Backtester(model_file="classification_predictions.csv", bankroll=1000, model_type="classification")
-backtester.run()
+# backtester = Backtester(model_file="random_forest_predictions.csv", bankroll=1000, model_type="classification")
+# backtester.run()
 
 #Regression poisson model:
 # backtester_poisson = Backtester(model_file="regression_predictions.csv", bankroll=1000, model_type="regression")
