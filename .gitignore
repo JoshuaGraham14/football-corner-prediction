@@ -4,8 +4,11 @@ venv/
 #Environemnt variables
 .env
 
-# Ignore dataset files (handled by DVC)
-data/**/*.csv
+#All data/image files
+*.csv
+*.png
+*.pdf
+*.pkl
 
 # Ignore Jupyter notebook checkpoints
 __pycache__/
