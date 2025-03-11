@@ -126,7 +126,7 @@ def create_markdown_report(config, feature_correlation_image_path, target_variab
 
     return markdown_content
 
-def update_markdown_with_model_details(markdown_content, model_name, feature_importances, best_threshold, classification_report_str_1, classification_report_str_2, classification_report_image_path, roc_prc_image_path, scatter_image_path):
+def update_markdown_with_model_details(markdown_content, model_name, feature_importances, best_threshold, classification_report_str_1, classification_report_str_2, classification_report_image_path, roc_prc_image_path, scatter_image_path, backtesting_results, backtesting_image_path):
     # Convert image paths to base64:
     with open(classification_report_image_path,"rb") as image_file:
         encoded_classification_report_image =base64.b64encode(image_file.read()).decode('utf-8')
@@ -134,6 +134,8 @@ def update_markdown_with_model_details(markdown_content, model_name, feature_imp
         encoded_roc_prc_image =base64.b64encode(image_file.read()).decode('utf-8')
     with open(scatter_image_path,"rb") as image_file:
         encoded_scatter_image =base64.b64encode(image_file.read()).decode('utf-8')
+    with open(backtesting_image_path,"rb") as image_file:
+        encoded_backtesting_image =base64.b64encode(image_file.read()).decode('utf-8')
 
     # Add feature importance table in Markdown format
     markdown_content += f"""
@@ -191,9 +193,14 @@ def update_markdown_with_model_details(markdown_content, model_name, feature_imp
 <hr style="border:0.2px solid #2c3e50; margin:20px 0;">
 
 <div style="page-break-after:always;"></div>
+
 <hr style="border:0.2px solid #2c3e50; margin:20px 0;">
 #### Scatter Graph
 <img src="data:image/png;base64,{encoded_scatter_image}" style="max-width: 100%;height:auto;">
+<hr style="border:0.2px solid #2c3e50; margin:20px 0;">
+#### Backtesting Results
+{backtesting_results}
+<img src="data:image/png;base64,{encoded_backtesting_image}" style="max-width: 100%;height:auto;">
 
 <div style="page-break-after:always;"></div>
 """

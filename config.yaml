@@ -67,9 +67,9 @@ model:
   classification:
     models: 
       - "random_forest"
-      # - "logistic_regression"
-      # - "svc"
-      # - "xgboost"
+      - "logistic_regression"
+      - "svc"
+      - "xgboost"
     grid_search: false  #If true... it overrides hyperparameters
     hyperparameters:
       random_forest:
@@ -100,10 +100,8 @@ model:
 
 backtesting:
   initial_bankroll: 1000
-  stake_fixed: 20
-  kelly_fraction_cap: 0.1
-  test_split_size: 500
+  fixed_bet_percent: 0.02
 
 paths:
   dataset: "../data/processed/aggregated_full.csv"
-  total_corner_odds: "..data/external/totalCorner_odds.csv"
+  total_corner_odds: "../data/external/totalCorner_odds.csv"
