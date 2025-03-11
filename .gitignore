@@ -9,6 +9,7 @@ venv/
 *.png
 *.pdf
 *.pkl
+*.json
 
 # Ignore Jupyter notebook checkpoints
 __pycache__/
