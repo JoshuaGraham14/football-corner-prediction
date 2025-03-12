@@ -80,13 +80,16 @@ li{{
 </style>
 """
 
-def create_markdown_report(config, feature_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train):
+def create_markdown_report(config, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train):
     #Get date for pdf title...
     now = datetime.now()
     date_time_str = now.strftime("%Y-%m-%d, %H:%M")
 
     with open(feature_correlation_image_path, "rb") as image_file:
         encoded_feature_correlation_image = base64.b64encode(image_file.read()).decode('utf-8')
+    
+    with open(point_biserial_correlation_image_path, "rb") as image_file:
+        encoded_point_biserial_correlation_image = base64.b64encode(image_file.read()).decode('utf-8')
     
     #Markdown content... starting with style sheet:
     markdown_content = STYLE_STR
@@ -114,6 +117,9 @@ def create_markdown_report(config, feature_correlation_image_path, target_variab
 #### Feature Correlation
 <img src="data:image/png;base64,{}" style="max-width:100%; height:auto;">
 
+#### Point-Biserial Correlation
+<img src="data:image/png;base64,{}" style="max-width:100%; height:auto;">
+
 <div style="page-break-after:always;"></div>
     """.format(
         date_time_str,
@@ -121,7 +127,8 @@ def create_markdown_report(config, feature_correlation_image_path, target_variab
         ", ".join(selected_features),
         ", ".join(constructed_features),
         "\n".join([f"- **{model}**: {config['model']['classification']['hyperparameters'].get(model,{})}" for model in models_to_train]),
-        encoded_feature_correlation_image
+        encoded_feature_correlation_image,
+        encoded_point_biserial_correlation_image
     )
 
     return markdown_content

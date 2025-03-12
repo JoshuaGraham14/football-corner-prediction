@@ -6,10 +6,12 @@
 - `Plot_roc_and_prc` (calls `plot_roc_curve` and `plot_precision_recall_curve`)
 """
 
+import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay
+from scipy.stats import pointbiserialr
 
 def plot_correlation(df_selected, selected_features, constructed_features, target_variables, show_output=True):
     #Corelation matrix:
@@ -119,3 +121,40 @@ def plot_classification_report(optimal_model, X_val, y_val, X_test, y_test, mode
         plt.close()
 
     return image_path
+
+def plot_point_biserial_correlation (df_selected, selected_features, constructed_features):
+    #Calc Point-Biserial correlation and P-values:
+    correlation_results = [
+        (col, *pointbiserialr(df_selected[col], df_selected['target']))
+        for col in df_selected[selected_features+constructed_features] if col !='target'
+    ]
+    corr_df = pd.DataFrame(correlation_results, columns=['Feature', 'Correlation','P-value'])
+    corr_df.set_index('Feature', inplace=True)
+
+    corr_df['Abs Correlation'] =abs(corr_df['Correlation'])
+    corr_df['Combined Score'] =corr_df['Abs Correlation']*(1-corr_df['P-value'])
+
+    #Print top 10 features
+    print("--- TOP 10 FEATURES ---")
+    print(corr_df['Combined Score'].nlargest(10))
+    print("-----------------------")
+
+    # Plot heatmaps
+    fig, axes = plt.subplots(1, 3, figsize=(30, 8))
+    sns.heatmap(corr_df[['Abs Correlation']],annot=True, cmap='coolwarm',ax=axes[0])
+    axes[0].set_title('Point-Biserial Correlation Heatmap')
+    sns.heatmap(corr_df[['P-value']],annot=True, cmap='coolwarm',ax=axes[1])
+    axes[1].set_title('P-value Heatmap')
+    sns.heatmap(corr_df[['Combined Score']],annot=True, cmap='coolwarm_r',ax=axes[2])
+    axes[2].set_title('Combined Score Heatmap')
+    plt.tight_layout()
+
+    # Save graph as an image
+    point_biserial_correlation_image_path = f"../reports/images/point_biserial_correlation.png"
+    plt.savefig(point_biserial_correlation_image_path)
+    
+    plt.show()
+
+    return point_biserial_correlation_image_path
+
+   

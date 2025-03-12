@@ -13,7 +13,7 @@ from simulator import Simulator
 import random
 
 class Backtester(Simulator):
-    def __init__(self, config, odds_file, model_file=None, model_type="classification", target_mean=1.32, margin=0.15):
+    def __init__(self, config, odds_file, model_file=None, model_type="classification", target_mean=1.32, margin=0.1):
         """
         Initialise backtester:
         - odds_file = csv containing historical odds (this file is always used)
@@ -56,12 +56,12 @@ class Backtester(Simulator):
         """
         Scales the odds_1_plus_corner to fit within a range centered 
         around target mean.
-        Also applies a spcified 'bookies' margin...
+        Also applies a specified 'bookies' margin...
         """
         # print(f"Mean pre: {self.odds_data['odds_1_plus_corner'].mean()}")
 
-        spread = target_mean * margin
-        min_odds = target_mean - spread / 2
+        spread = target_mean*margin
+        min_odds = target_mean - spread/2
 
         min_original=self.odds_data["odds_1_plus_corner"].min()
         max_original=self.odds_data["odds_1_plus_corner"].max()
@@ -104,7 +104,7 @@ class Backtester(Simulator):
             self.bankroll_history.append(self.bankroll)
 
         #Simulation over... -> print results and summaries
-        self.print_trade_summary(show_output)
+        self.print_trade_log(show_output)
         output_str = self.print_summary(show_output)
         backtesting_image_path = self.display_results(show_output)
 

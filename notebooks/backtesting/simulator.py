@@ -40,9 +40,9 @@ class Simulator:
         print(f"📊 Results saved to {filename}") 
 
 
-    def print_trade_summary(self, show_output=True):
+    def print_trade_log(self, show_output=True):
         """
-        Shows summary of all bets placed
+        Shows log of all bets placed
         """
         if show_output:
             print("\n📊 Betting Trade Summary:")
