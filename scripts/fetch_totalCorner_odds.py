@@ -57,8 +57,7 @@ def expected_corners(market_line, over_odds, under_odds):
     return market_line - (over_prob-under_prob)
 
 #Func: Calculates probability of 1+ corner using poisson distr
-def odds_1_plus_corner(expected_total, current_corners):
-    expected_additional = max(0, expected_total-current_corners)
+def odds_1_plus_corner(expected_additional):
     #Poission distr wiht: P(0, λ)
     prob_0_corners = stats.poisson.pmf(0, expected_additional) 
     prob_1_plus = 1 - prob_0_corners #P(1+ corners) = 1- P(0 corners)
@@ -102,8 +101,8 @@ for index,row in match_ids_df.iterrows():
     #compute expected_corners using over and under odds
     total_corners=corners_home +corners_away
     expected_total=expected_corners(market_line, over_odds, under_odds)
-    expected_additional =round(expected_total-total_corners, 2)
-    odds_1_plus= odds_1_plus_corner(expected_total, total_corners)
+    expected_additional = max(0,round(expected_total-total_corners, 2))
+    odds_1_plus= odds_1_plus_corner(expected_additional)
 
     #store in PD df...
     result=pd.DataFrame([{

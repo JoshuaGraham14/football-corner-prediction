@@ -10,8 +10,10 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 from simulator import Simulator
 
+import random
+
 class Backtester(Simulator):
-    def __init__(self, config, odds_file, model_file=None, model_type="classification"):
+    def __init__(self, config, odds_file, model_file=None, model_type="classification", min_odds=1.1, max_odds=1.3):
         """
         Initialise backtester:
         - odds_file = csv containing historical odds (this file is always used)
@@ -27,7 +29,10 @@ class Backtester(Simulator):
         
         #Load historical odds 
         self.odds_data=pd.read_csv(odds_file)
-        
+
+        # Scale odds
+        self.scale_odds(min_odds, max_odds)
+
         if model_file:
             #Load our model-specific predictions:
             self.model_data = pd.read_csv(model_file)
@@ -47,6 +52,21 @@ class Backtester(Simulator):
         self.model_type = model_type
         self.fixed_bet_percent = fixed_bet_percent
 
+    def scale_odds(self, min_odds, max_odds):
+        """
+        Scales the odds_1_plus_corner using Min-Max Scaling to fit
+        within range: [min_odds, max_odds]
+        """
+        spread = max_odds-min_odds
+        if "odds_1_plus_corner" in self.odds_data.columns:
+            min_original=self.odds_data["odds_1_plus_corner"].min()
+            max_original=self.odds_data["odds_1_plus_corner"].max()
+            
+            self.odds_data["odds_1_plus_corner"] = min_odds + (
+                (self.odds_data["odds_1_plus_corner"]-min_original) /
+                (max_original-min_original)
+            ) * (spread)
+
     def run(self, show_output=True):
         """
         Runs the backtesting simulation:
@@ -57,6 +77,7 @@ class Backtester(Simulator):
         for _, row in self.data.iterrows():
             match_id = row['kaggle_id']
             odds =row['odds_1_plus_corner']
+            # odds = random.uniform(1.2, 1.5)
             actual_outcome=row['actual_result']  #1 if 1+ corner occurred, 0 if not
 
             if self.model_type =="classification":
