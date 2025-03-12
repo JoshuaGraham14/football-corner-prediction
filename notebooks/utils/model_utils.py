@@ -42,7 +42,7 @@ def grid_search(model_name, model, X_train, y_train, show_output=True):
     Performs Grid Search for hyperparameter tuning depending on input model:
     """
     if model_name == "random_forest":
-        param_grid = param_grid or {
+        param_grid = {
             'n_estimators': [50, 100, 200],
             'max_depth': [None, 10, 20],
             'min_samples_split': [2, 5, 10],
@@ -51,20 +51,21 @@ def grid_search(model_name, model, X_train, y_train, show_output=True):
         }
 
     elif model_name == "logistic_regression":
-        param_grid = param_grid or {
+        param_grid = {
             'C': [0.1, 1, 10,100],
-            'solver': ['liblinear', 'saga']
+            'solver': ['liblinear', 'saga'],
+            'penalty': ['l1', 'l2']
         }
 
     elif model_name == "svc":
-        param_grid = param_grid or {
+        param_grid = {
             'C': [0.1, 1, 10],
             'kernel': ['linear', 'rbf'],
             'gamma':['scale', 'auto']
         }
 
     elif model_name == "xgboost":
-        param_grid = param_grid or {
+        param_grid = {
             'n_estimators': [50, 100, 200],
             'learning_rate': [0.01, 0.1, 0.3],
             'max_depth': [3, 5, 7],
@@ -75,10 +76,8 @@ def grid_search(model_name, model, X_train, y_train, show_output=True):
     precision_scorer = make_scorer(precision_score, average="micro")
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring=precision_scorer, n_jobs=-1, verbose=2)
     grid_search.fit(X_train, y_train)
-
-    if show_output:
-        print("Best Parameters:", grid_search.best_params_)
-        print("Best Precision Score:", grid_search.best_score_)
+    print("Best Parameters:", grid_search.best_params_)
+    print("Best Precision Score:", grid_search.best_score_)
 
     #Use best_estimator for predictions
     best_model = grid_search.best_estimator_

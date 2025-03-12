@@ -57,25 +57,33 @@ class Simulator:
         """
         num_bets=len(self.history)
         total_staked =sum(row[2] for row in self.history)
-        roi = (self.total_profit/total_staked)*100
+        roi = (self.total_profit/self.initial_bankroll)*100
         win_rate = (sum(1 for row in self.history if row[4]==1)/num_bets)*100
+
+        # Compute the edge over bookies
+        implied_prob = 1/(self.odds_data["odds_1_plus_corner"].mean())*100
+        edge = win_rate - implied_prob
 
         if show_output:
             print("\n--- Overall Summary ---")
             print(f"🏦 Initial Bankroll: £{self.initial_bankroll:.2f}")
             print(f"💰 Final Bankroll: £{self.bankroll:.2f}")
+            print(f"💸 Total Staked: £{total_staked:.2f}")
             print(f"📈 Total Profit: £{self.total_profit:.2f}")
             print(f"📊 ROI: {roi:.2f}%")
-            print(f"✅ Win rate: {win_rate:.2f}% over {num_bets} bets\n")
+            print(f"✅ Win rate: {win_rate:.2f}% over {num_bets} bets")
+            print(f"🎯 Edge Over Bookies: {edge:.2f}%\n")
 
         #Output str to return for PDF report:
-        output_str = f"""
-**--- Overall Summary ---**\n
-🏦 **Initial Bankroll**: £{self.initial_bankroll:.2f}\n
-💰 **Final Bankroll**: £{self.bankroll:.2f}\n
-📈 **Total Profit**: £{self.total_profit:.2f}\n
-📊 **ROI**: {roi:.2f}%\n
-✅ **Win rate**: {win_rate:.2f}% over {num_bets} bets\n
-"""
-        
-        return output_str
+        output_list = [
+            "**--- Overall Summary ---**",
+            f"🏦 **Initial Bankroll**: £{self.initial_bankroll:.2f}",
+            f"💰 **Final Bankroll**: £{self.bankroll:.2f}",
+            f"💸 **Total Staked**: £{total_staked:.2f}",
+            f"📈 **Total Profit**: £{self.total_profit:.2f}",
+            f"📊 **ROI**: {roi:.2f}%",
+            f"✅ **Win rate**: {win_rate:.2f}% over {num_bets} bets",
+            f"🎯 **Edge Over Bookies**: {edge:.2f}%"
+        ]
+
+        return output_list
