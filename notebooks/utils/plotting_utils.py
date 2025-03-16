@@ -39,7 +39,7 @@ def plot_correlation(df_selected, selected_features, constructed_features, targe
 
     return feature_correlation_image_path
 
-def plot_scatter(y_probs_final, y_test_final, optimal_threshold, model_name, show_output=True):
+def plot_scatter(y_probs_final, y_test_final, model_name, show_output=True, optimal_threshold=0.5):
     # Scatter plot: target vs predicted probabilities
     plt.figure(figsize=(12, 5))
     plt.scatter(range(len(y_probs_final)), y_probs_final,c=y_test_final,cmap='coolwarm',alpha=0.7,label='Predicted Probability')
