@@ -49,14 +49,20 @@ features:
     # - total_corners_75_80
     # - total_shots_75_80
     # - total_fouls_75_80
-    - odds_ratio
-    - shot_to_corner_ratio_pre_80
-    # - leading_team_urgency_to_attack
+    # - odds_ratio
+    - trailing_team_attack_intensity
+    - leading_team_attack_intensity
+    - trailing_team_defensive_pressure
+    - leading_team_defensive_pressure
+    - trailing_team_shot_to_corner_ratio_pre_80
+    - leading_team_shot_to_corner_ratio_pre_80
+    - trailing_team_aggression_score_pre_80
+    - leading_team_aggression_score_pre_80
+    
+    - leading_team_urgency_to_attack
     - trailing_team_urgency_to_attack
-    # - leading_team_momentum_to_attack
+    - leading_team_momentum_to_attack
     - trailing_team_momentum_to_attack
-    - attack_intensity
-    - defensive_pressure
     - trailing_team_probability
   target_variable:
     - target

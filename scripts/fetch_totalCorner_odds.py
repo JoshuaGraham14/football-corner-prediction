@@ -66,7 +66,7 @@ def odds_1_plus_corner(expected_additional):
 
 
 #----- MAIN -----
-OUTPUT_FILE = "data/external/totalCorner_odds.csv"
+OUTPUT_FILE = "data/external/totalCorner_odds2.csv"
 
 #Read match_ids.csv
 print("Loading match_ids.csv...")
