@@ -12,6 +12,7 @@ features:
     # - game_state_80
   selected_features:  
     # - goal_diff_80
+    - trailing_is_home
     # - leading_team_shots_pre80
     # - trailing_team_shots_pre80
     # - leading_team_fouls_pre80
@@ -38,6 +39,19 @@ features:
     # - odd_d
     # - odd_a
   constructed_features: 
+    # *** League Features ***
+    # - league_england
+    # - league_spain
+    # - league_germany
+    # - league_italy
+    # - league_france
+    # - league_avg_corners
+    # - league_avg_home_corners
+    # - league_avg_away_corners
+    # - corner_rate_vs_avg
+    # - trailing_team_corner_rate_vs_avg
+    # - leading_team_corner_rate_vs_avg
+
     # - total_shots_pre_80
     # - total_fouls_pre_80
     # - total_yellow_cards_pre_80
