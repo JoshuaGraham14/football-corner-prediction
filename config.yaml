@@ -38,6 +38,29 @@ features:
     # - odd_d
     # - odd_a
   constructed_features: 
+    # *** Game State Features ***
+    # - game_state_80_h
+    # - game_state_80_a
+    # - game_state_80_d
+    # - league_england
+    # - league_spain
+    # - league_germany
+    # - league_italy
+    # - league_france
+    # - league_avg_corners
+    # - league_avg_home_corners
+    # - league_avg_away_corners
+    - corner_rate_vs_avg
+    - home_corner_rate_vs_avg
+    - away_corner_rate_vs_avg
+
+    # *** Goal Diff Features ***
+    # - goal_diff_80
+    # - abs_goal_diff_80
+    # - close_game_80
+    # - goal_diff_squared_80
+
+    # *** Total Features ***
     # - total_shots_pre_80
     # - total_fouls_pre_80
     # - total_yellow_cards_pre_80
@@ -49,6 +72,8 @@ features:
     # - total_corners_75_80
     # - total_shots_75_80
     # - total_fouls_75_80
+
+    # *** Technical Indicator Features ***
     - odds_ratio
     - shot_to_corner_ratio_pre_80
     - home_urgency_to_attack

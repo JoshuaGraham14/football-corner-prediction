@@ -118,7 +118,7 @@ def get_feature_importance(model, model_name, selected_features, constructed_fea
 
     return combined_features
 
-def optimise_threshold(y_pred_val, y_val, show_output=True):
+def optimise_threshold(y_pred_val, y_val, show_output=True, min_recall=0.1):
     #--- Threshold Maximisation ---
     thresholds = np.linspace(0.5, 0.95, 20) #test thresholds from 0.5 to 0.95
     results = []
@@ -127,7 +127,7 @@ def optimise_threshold(y_pred_val, y_val, show_output=True):
         precision_t= precision_score(y_val, y_pred_t, zero_division=1)  
         recall_t= recall_score(y_val, y_pred_t)
         
-        if recall_t>=0.1: #only take results where recall >= 0.1
+        if recall_t>=min_recall: #only take results where recall >= min_recall
             results.append((t, precision_t, recall_t))
 
     best_threshold = max(results, key=lambda x: x[1])

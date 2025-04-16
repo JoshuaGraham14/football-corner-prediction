@@ -75,14 +75,14 @@ def plot_roc_curve(fpr, tpr, roc_auc, model_name, ax):
     ax.set_title(f'ROC Curve - {model_name}')
     ax.legend(loc="lower right")
     
-def plot_precision_recall_curve(precision, recall,pr_auc, model_name, ax):
+def plot_precision_recall_curve(precision, recall, pr_auc, model_name, ax):
     ax.plot(recall, precision, color='b', lw=2, label=f'Precision-Recall curve (AUC = {pr_auc:.2f})')
     ax.set_xlabel('Recall')
     ax.set_ylabel('Precision')
     ax.set_title(f'Precision-Recall Curve - {model_name}')
     ax.legend(loc="lower left")
 
-def plot_roc_and_prc(fpr, tpr, roc_auc, precision,recall, pr_auc,model_name, show_output=True):
+def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, show_output=True):
     #Plots ROC curve and Precision-recall side by side
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))  
     plot_roc_curve(fpr, tpr, roc_auc, model_name,ax1)
