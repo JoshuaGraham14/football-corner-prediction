@@ -91,14 +91,26 @@ def get_feature_importance(model, model_name, selected_features, constructed_fea
     # Collect all features
     all_features = selected_features + constructed_features
     
+    #Uses the base estimator to get best estimator for calibrated models
+    if hasattr(model, 'base_estimator'):
+        base_model = model.base_estimator
+    else:
+        base_model = model
+    
     if model_name in ["random_forest", "xgboost"]:
-        importance = model.feature_importances_
+        if hasattr(base_model, 'feature_importances_'):
+            importance = base_model.feature_importances_
+        else:
+            importance = np.zeros(len(all_features)) #if feature importances not available
     elif model_name == "logistic_regression":
-        importance = model.coef_[0]
+        if hasattr(base_model, 'coef_'):
+            importance = base_model.coef_[0]
+        else:
+            importance = np.zeros(len(all_features))
     elif model_name == "svc":
         #For SVC, feature importance is only available for linear
-        if hasattr(model, 'coef_'):
-            importance = model.coef_[0]
+        if hasattr(base_model, 'coef_'):
+            importance = base_model.coef_[0]
         else:  #Else, if its non-linear... set all importance to zero:
             importance = np.zeros(len(all_features)) 
     else:

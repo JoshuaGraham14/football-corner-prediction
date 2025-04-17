@@ -129,6 +129,8 @@ model:
     grid_search: false  #i.e. hyperparameters optimisation = on
     hyperparameters: {}  #empty dict = use default parameters
 
+apply_calibration: false
+
 backtesting:
   initial_bankroll: 1000
   fixed_bet_percent: 0.1

@@ -6,6 +6,7 @@
 - `Plot_roc_and_prc` (calls `plot_roc_curve` and `plot_precision_recall_curve`)
 """
 
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
@@ -13,8 +14,7 @@ import numpy as np
 import seaborn as sns
 from sklearn.metrics import ConfusionMatrixDisplay
 from scipy.stats import pointbiserialr
-
-import os
+from sklearn.calibration import calibration_curve
 
 def plot_correlation(df_selected, selected_features, constructed_features, target_variables, show_output=True):
     #Corelation matrix:
@@ -41,6 +41,29 @@ def plot_correlation(df_selected, selected_features, constructed_features, targe
         plt.close()
 
     return feature_correlation_image_path
+
+def plot_calibration_curve(y_true, y_prob, model_name, show_output=False):
+    """Plots a calibration curve for the inputted model"""
+    prob_true, prob_pred = calibration_curve(y_true, y_prob, n_bins=10)
+    
+    plt.figure(figsize=(8, 6))
+    plt.plot(prob_pred, prob_true, marker='o', linewidth=2,label='Model')
+    plt.plot([0, 1], [0, 1], linestyle='--',label='Perfectly calibrated')
+    plt.xlabel('Predicted probability')
+    plt.ylabel('True probability in each bin')
+    plt.title(f'Calibration Curve -{model_name}')
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    
+    # Save graph as an image
+    image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_calibration.png"
+    plt.savefig(image_path)
+    
+    if show_output:
+        plt.show()
+    else:
+        plt.close()
 
 def plot_scatter(y_probs_final, y_test_final, model_name, show_output=True, optimal_threshold=0.5):
     # Scatter plot: target vs predicted probabilities
