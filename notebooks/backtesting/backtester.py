@@ -105,10 +105,10 @@ class Backtester(Simulator):
 
         #Simulation over... -> print results and summaries
         self.print_trade_log(show_output)
-        output_str = self.print_summary(show_output)
+        results_str_list, results_dict = self.print_summary(show_output)
         backtesting_image_path = self.display_results(show_output)
 
-        return backtesting_image_path, output_str
+        return backtesting_image_path, results_str_list, results_dict
 
     def get_fixed_bet_size(self):
         """

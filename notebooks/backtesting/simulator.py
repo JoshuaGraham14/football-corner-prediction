@@ -64,6 +64,9 @@ class Simulator:
         implied_prob = 1/(self.odds_data["odds_1_plus_corner"].mean())*100
         edge = win_rate - implied_prob
 
+        #Three outputs...
+
+        #1- Output to print to console
         if show_output:
             print("\n--- Overall Summary ---")
             print(f"🏦 Initial Bankroll: £{self.initial_bankroll:.2f}")
@@ -74,8 +77,8 @@ class Simulator:
             print(f"✅ Win rate: {win_rate:.2f}% over {num_bets} bets")
             print(f"🎯 Edge Over Bookies: {edge:.2f}%\n")
 
-        #Output str to return for PDF report:
-        output_list = [
+        #2 - Output str to return for PDF report (using markdown formatting):
+        results_str_list = [
             "**--- Overall Summary ---**",
             f"🏦 **Initial Bankroll**: £{self.initial_bankroll:.2f}",
             f"💰 **Final Bankroll**: £{self.bankroll:.2f}",
@@ -86,4 +89,16 @@ class Simulator:
             f"🎯 **Edge Over Bookies**: {edge:.2f}%"
         ]
 
-        return output_list
+        #3 - Output as dict for report saving
+        results_dict = {
+            "initial_bankroll": round(self.initial_bankroll, 2),
+            "final_bankroll": round(self.bankroll, 2),
+            "total_staked": round(total_staked, 2),
+            "total_profit": round(self.total_profit, 2),
+            "roi": round(roi, 2),
+            "win_rate": round(win_rate, 2),
+            "num_bets": round(num_bets, 2),
+            "edge": round(edge, 2)
+        }
+
+        return results_str_list, results_dict
