@@ -9,7 +9,7 @@ import yaml
 project_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
 sys.path.append(project_root)
 
-def load_config(config_name="config.yaml"):
+def load_config(config_name):
     config_path = os.path.join(project_root, config_name)
 
     if not os.path.exists(config_path):
