@@ -1,6 +1,5 @@
 import os
 import sys
-import yaml
 # Set project root
 project_root = os.path.abspath(os.path.join(os.getcwd(), ".."))
 sys.path.append(project_root)
@@ -9,8 +8,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 from simulator import Simulator
-
-import random
 
 class Backtester(Simulator):
     def __init__(self, config, odds_file, model_file=None, model_type="classification", target_mean=1.32, margin=0.1):

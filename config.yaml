@@ -50,15 +50,21 @@ features:
     # - league_avg_corners
     # - league_avg_home_corners
     # - league_avg_away_corners
-    - corner_rate_vs_avg
-    - home_corner_rate_vs_avg
-    - away_corner_rate_vs_avg
+    # - corner_rate_vs_avg
+    # - home_corner_rate_vs_avg
+    # - away_corner_rate_vs_avg
 
     # *** Goal Diff Features ***
     # - goal_diff_80
     # - abs_goal_diff_80
     # - close_game_80
     # - goal_diff_squared_80
+
+    # *** Team Corner Averages ***
+    - home_corners_for_avg  
+    - home_corners_against_avg
+    - away_corners_for_avg
+    - away_corners_against_avg
 
     # *** Total Features ***
     # - total_shots_pre_80
