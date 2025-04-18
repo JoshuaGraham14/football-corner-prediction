@@ -65,6 +65,10 @@ features:
     - home_corners_against_avg
     - away_corners_for_avg
     - away_corners_against_avg
+    - home_post80_corners_for_avg  
+    - home_post80_corners_against_avg
+    - away_post80_corners_for_avg
+    - away_post80_corners_against_avg
 
     # *** Total Features ***
     # - total_shots_pre_80
