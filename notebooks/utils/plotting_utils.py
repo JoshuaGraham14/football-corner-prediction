@@ -65,20 +65,52 @@ def plot_calibration_curve(y_true, y_prob, model_name, show_output=False):
     else:
         plt.close()
 
-def plot_scatter(y_probs_final, y_test_final, model_name, show_output=True, optimal_threshold=0.5):
+def plot_prediction_distributions(y_probs_final, y_test_final, model_name, show_output=True, optimal_threshold=0.5):
+    #Split y_probs_final by target = 0 or 1...
+    y_probs_class0 = y_probs_final[y_test_final == 0]
+    y_probs_class1 = y_probs_final[y_test_final == 1]
+    
+    # # Calculate mean probabilities for each class
+    # mean_prob_class0 = np.mean(y_probs_class0)
+    # mean_prob_class1 = np.mean(y_probs_class1)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), gridspec_kw={'height_ratios': [2, 1]})
+
     # Scatter plot: target vs predicted probabilities
-    plt.figure(figsize=(12, 5))
-    plt.scatter(range(len(y_probs_final)), y_probs_final,c=y_test_final,cmap='coolwarm',alpha=0.7,label='Predicted Probability')
-    plt.axhline(optimal_threshold, color='red', linestyle='dashed',linewidth=2,label=f'Threshold = {optimal_threshold:.2f}')
+    ax1.scatter(range(len(y_probs_final)), y_probs_final, c=y_test_final, cmap='coolwarm', alpha=0.7, label='Predicted Probability')
+
+    ax1.axhline(optimal_threshold, color='grey', linestyle='dashed', linewidth=2, label=f'Threshold = {optimal_threshold:.2f}')
+    
+    # plot mean probability for each class:
+    # ax1.axhline(mean_prob_class0, color='blue', linestyle='-', linewidth=1.5, 
+    #             label=f'Mean (Class 0) = {mean_prob_class0:.2f}')
+    # ax1.axhline(mean_prob_class1, color='red', linestyle='-', linewidth=1.5, 
+    #             label=f'Mean (Class 1) = {mean_prob_class1:.2f}')
+
     class_0 =mlines.Line2D([], [],color='blue',marker='o',linestyle='None', markersize=8, alpha=0.7, label='Target: No 1+ Corners')
     class_1=mlines.Line2D([], [],color='red', marker='o',linestyle='None',markersize=8,alpha=0.7, label='Target: 1+ Corners')
-    plt.xlabel('Match Index')
-    plt.ylabel('Predicted probability of 1+ corners')
-    plt.title(f'{model_name} - Predicted Probability vs Actual Target')
-    plt.legend(handles=[class_0, class_1,plt.Line2D([], [],color='grey',linestyle='dashed',linewidth=2,label='Threshold')])
+    ax1.set_xlabel('Match Index')
+    ax1.set_ylabel('Predicted probability of 1+ corners')
+    ax1.set_title(f'{model_name} - Predicted Probability vs Actual Target')
+    ax1.legend(handles=[class_0, class_1, 
+                        plt.Line2D([], [], color='grey',linestyle='dashed',linewidth=2,label='Threshold'),
+                        # plt.Line2D([], [], color='blue', linestyle='-', linewidth=1.5, label=f'Mean (Class 0) = {mean_prob_class0:.3f}'),
+                        # plt.Line2D([], [], color='red', linestyle='-', linewidth=1.5, label=f'Mean (Class 1) = {mean_prob_class1:.3f}')
+        ])
+    
+    #KDE plot: density of probabilities, split by actual true target
+    sns.kdeplot(y_probs_class0, ax=ax2, fill=True,color='blue', alpha=0.5,label='Target: No 1+ Corners')
+    sns.kdeplot(y_probs_class1, ax=ax2,fill=True, color='red', alpha=0.5,label='Target: 1+ Corners')
+    ax2.axvline(optimal_threshold, color='red', linestyle='dashed', linewidth=2, label=f'Threshold = {optimal_threshold:.2f}')
+    ax2.set_xlabel('Predicted probability of 1+ corners')
+    ax2.set_ylabel('Density')
+    ax2.set_title('KDE Distribution of Predicted Probabilities by Class')
+    ax2.legend()
+    plt.tight_layout()
+
 
     # Save graph as an image
-    image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_scatter.png"
+    image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_prediction_distributions.png"
     plt.savefig(image_path)
     
     if show_output:

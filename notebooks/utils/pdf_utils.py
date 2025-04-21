@@ -206,8 +206,10 @@ def update_markdown_with_model_details(markdown_content, model_name, feature_imp
 <div style="page-break-after:always;"></div>
 
 <hr style="border:0.2px solid #2c3e50; margin:20px 0;">
-#### Scatter Graph
+#### Prediction Distribution Graphs
 <img src="data:image/png;base64,{encoded_scatter_image}" style="max-width: 100%;height:auto;">
+
+<div style="page-break-after:always;"></div>
 <hr style="border:0.2px solid #2c3e50; margin:20px 0;">
 """
     
