@@ -80,16 +80,19 @@ li{{
 </style>
 """
 
-def create_markdown_report(config, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train, is_calibration_applied):
+def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_split_chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train, is_calibration_applied):
     #Get date for pdf title...
     now = datetime.now()
     date_time_str = now.strftime("%Y-%m-%d, %H:%M")
 
     with open(feature_correlation_image_path, "rb") as image_file:
         encoded_feature_correlation_image = base64.b64encode(image_file.read()).decode('utf-8')
-    
     with open(point_biserial_correlation_image_path, "rb") as image_file:
         encoded_point_biserial_correlation_image = base64.b64encode(image_file.read()).decode('utf-8')
+    with open(dataset_split_bar_charts_image_path,"rb") as image_file:
+        encoded_dataset_split_bar_charts_image =base64.b64encode(image_file.read()).decode('utf-8')
+    with open(dataset_split_chronological_image_path,"rb") as image_file:
+        encoded_dataset_split_chronological_image =base64.b64encode(image_file.read()).decode('utf-8')
     
     #Markdown content... starting with style sheet:
     markdown_content = STYLE_STR
@@ -124,6 +127,12 @@ def create_markdown_report(config, feature_correlation_image_path, point_biseria
 <img src="data:image/png;base64,{}" style="max-width:100%; height:auto;">
 
 <div style="page-break-after:always;"></div>
+
+#### Dataset Train/Validation/Test Split Visualisation
+<img src="data:image/png;base64,{}" style="max-width:100%; height:auto;">
+<img src="data:image/png;base64,{}" style="max-width:100%; height:auto;">
+
+<div style="page-break-after:always;"></div>
     """.format(
         date_time_str,
         target_variable,
@@ -132,7 +141,9 @@ def create_markdown_report(config, feature_correlation_image_path, point_biseria
         "\n".join([f"- **{model}**: {config['model']['classification']['hyperparameters'].get(model,{})}" for model in models_to_train]),
         is_calibration_applied,
         encoded_feature_correlation_image,
-        encoded_point_biserial_correlation_image
+        encoded_point_biserial_correlation_image,
+        encoded_dataset_split_bar_charts_image,
+        encoded_dataset_split_chronological_image
     )
 
     return markdown_content
@@ -222,6 +233,23 @@ def update_markdown_with_model_details(markdown_content, model_name, feature_imp
     """.format(
         "<br>".join(result for result in backtesting_results_list),
         encoded_backtesting_image
+    )
+
+    return markdown_content
+
+def append_pdf_with_combined_backtesting_results(markdown_content, backtesting_all_image_path):
+    # Convert image paths to base64:
+    with open(backtesting_all_image_path,"rb") as image_file:
+        encoded_backtesting_all_image =base64.b64encode(image_file.read()).decode('utf-8')
+
+    # Add feature importance table in Markdown format
+    markdown_content += """
+#### Backtesting Results Summary
+<img src="data:image/png;base64,{}" style="max-width: 100%;height:auto;">
+
+<div style="page-break-after:always;"></div>
+    """.format(
+        encoded_backtesting_all_image
     )
 
     return markdown_content

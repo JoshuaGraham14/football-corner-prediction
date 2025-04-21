@@ -279,17 +279,20 @@ def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, sho
 
     # Save and display plot...
     plt.tight_layout()
-    output_path = f"../reports/images/track{track_num}_data_split_visualisation.png"
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
-    if show_output: 
+
+    bar_charts_image_path = f"../reports/images/dataset_split/track{track_num}_barcharts.png"
+    os.makedirs(os.path.dirname(bar_charts_image_path), exist_ok=True)
+    plt.savefig(bar_charts_image_path, dpi=300, bbox_inches='tight')
+
+    if show_output:
         plt.show()
-    plt.close()
+    else:
+        plt.close()
 
     #---------------------------------------
     
     # Plot 3: Chronological dataset split distribution (on new plot)
-    fig2, ax2 = plt.subplots(figsize=(20, 2))
+    fig2, ax2 = plt.subplots(figsize=(20, 3))
      
     # Create a horizontal bar with segments for each split
     labels=['Train', 'Validation', 'Test']
@@ -343,12 +346,44 @@ def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, sho
     
     #Add legend
     ax2.legend(loc='lower left', bbox_to_anchor=(0.01, -0.5), ncol=3)
-    
-    # Save and display plot...
-    output_path = f"../reports/images/track{track_num}_data_split_chronological.png"
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+
+    plt.tight_layout()
+
+    chronological_image_path = f"../reports/images/dataset_split/track{track_num}_chronological.png"
+    os.makedirs(os.path.dirname(chronological_image_path), exist_ok=True)
+    plt.savefig(chronological_image_path, dpi=300, bbox_inches='tight')
+
     if show_output:
         plt.show()
-    plt.close()
+    else:
+        plt.close()
+
+    return bar_charts_image_path, chronological_image_path
     
+def plot_backtesting_all_models(histories_dict, initial_bankroll=1000, track_num=1, show_output=True):
+    """
+    Creates a comparison chart of multiple model backtesting simulations
+    -> histories_dict (dict): keys = model names, values = bankroll history lists
+    """
+    plt.figure(figsize=(12,6))
+    for label, history in histories_dict.items(): 
+        plt.plot(history,label=label, linewidth=2)
+ 
+    plt.axhline(y=initial_bankroll, color='gray',linestyle='--')
+    plt.title("Backtesting Bankroll Growth – Track Comparison")
+    plt.xlabel("Games Simulated")
+    plt.ylabel("Bankroll (£)")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout() 
+     
+    # Save plot as an image:
+    image_path =f"../reports/images/backtesting/track{track_num}_all.png" 
+    plt.savefig(image_path)
+    
+    if show_output:
+        plt.show() 
+    else:
+        plt.close()
+
+    return image_path 
