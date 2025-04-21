@@ -93,7 +93,7 @@ class Backtester(Simulator):
         results_str_list, results_dict = self.print_summary(show_output)
         backtesting_image_path = self.display_results(show_output)
 
-        return backtesting_image_path, results_str_list, results_dict
+        return backtesting_image_path, results_str_list, results_dict, self.bankroll_history
 
     def get_fixed_bet_size(self):
         """
@@ -109,7 +109,7 @@ class Backtester(Simulator):
         plt.plot(self.bankroll_history,label="Bankroll Over Time", color='blue',linewidth=2)
         plt.axhline(y=self.initial_bankroll,color='gray',linestyle='--',label="Starting Bankroll")
         plt.title(f"Backtesting Bankroll Growth ({self.model_name})")
-        plt.xlabel("Bets placed")
+        plt.xlabel("Games Simulated")
         plt.ylabel("Bankroll (£)")
         plt.legend()
         plt.grid(True)
@@ -124,4 +124,3 @@ class Backtester(Simulator):
             plt.close()
 
         return backtesting_image_path
-    
