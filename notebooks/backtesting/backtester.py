@@ -33,9 +33,9 @@ class Backtester(Simulator):
             #Load our model-specific predictions:
             self.model_data = pd.read_csv(model_file)
 
-            #Merge with historcal odds via kaggle_id
-            self.data =self.odds_data.merge(self.model_data, on="kaggle_id",how="inner")
-            self.data= self.data[["kaggle_id", "odds_1_plus_corner", "actual_result", "model_predicted_binary"]].dropna(axis=1, how="all")
+            #Merge with historcal odds via kaggle_id (left join to loop through entirety of games in odds_file)
+            self.data =self.odds_data.merge(self.model_data, on="kaggle_id",how="left")
+            self.data= self.data[["kaggle_id", "odds_1_plus_corner", "actual_result", "model_predicted_binary"]].copy()
 
         else:
             print("Errorr: No model file provided")  
@@ -80,9 +80,11 @@ class Backtester(Simulator):
             actual_outcome=row['actual_result']  #1 if 1+ corner occurred, 0 if not
             model_pred = row['model_predicted_binary']  # 1 = Bet, 0 = No Bet
 
-            if model_pred==1: #1 = bet -> so place a bet
-                stake = self.get_fixed_bet_size()
-                self.place_bet(match_id, odds, stake,actual_outcome)
+            # Skip game if NaN (i.e. for track 2, if no prediction was generated -> skip)
+            if not pd.isna(model_pred):
+                if model_pred==1: #1 = bet -> so place a bet
+                    stake = self.get_fixed_bet_size()
+                    self.place_bet(match_id, odds, stake,actual_outcome)
 
             self.bankroll_history.append(self.bankroll)
 
@@ -106,7 +108,7 @@ class Backtester(Simulator):
         plt.figure(figsize=(10,5))
         plt.plot(self.bankroll_history,label="Bankroll Over Time", color='blue',linewidth=2)
         plt.axhline(y=self.initial_bankroll,color='gray',linestyle='--',label="Starting Bankroll")
-        plt.title(f"Backtesting Bankroll Growth (Track {self.model_name})")
+        plt.title(f"Backtesting Bankroll Growth ({self.model_name})")
         plt.xlabel("Bets placed")
         plt.ylabel("Bankroll (£)")
         plt.legend()
