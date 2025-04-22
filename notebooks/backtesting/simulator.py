@@ -1,4 +1,5 @@
 import pandas as pd
+import statistics
 
 class Simulator:
     def __init__(self, initial_bankroll):
@@ -64,6 +65,12 @@ class Simulator:
         implied_prob = 1/(self.odds_data["odds_1_plus_corner"].mean())*100
         edge = win_rate - implied_prob
 
+        # Sharpe Ratio (shows risk-adjusted return)
+        returns = [row[3] / row[2] for row in self.history] #profit divide by stake
+        mean_return = statistics.mean(returns)
+        std_dev_return = statistics.stdev(returns)
+        sharpe_ratio = mean_return / std_dev_return if std_dev_return != 0 else 0
+
         #Three outputs...
 
         #1- Output to print to console
@@ -75,6 +82,7 @@ class Simulator:
             print(f"📈 Total Profit: £{self.total_profit:.2f}")
             print(f"📊 ROI: {roi:.2f}%")
             print(f"✅ Win rate: {win_rate:.2f}% over {num_bets} bets")
+            print(f"📉 Sharpe Ratio: {sharpe_ratio:.2f}\n")
             print(f"🎯 Edge Over Bookies: {edge:.2f}%\n")
 
         #2 - Output str to return for PDF report (using markdown formatting):
@@ -86,6 +94,7 @@ class Simulator:
             f"📈 **Total Profit**: £{self.total_profit:.2f}",
             f"📊 **ROI**: {roi:.2f}%",
             f"✅ **Win rate**: {win_rate:.2f}% over {num_bets} bets",
+            f"📉 **Sharpe Ratio**: {sharpe_ratio:.2f}",
             f"🎯 **Edge Over Bookies**: {edge:.2f}%"
         ]
 
@@ -98,6 +107,7 @@ class Simulator:
             "roi": round(roi, 2),
             "win_rate": round(win_rate, 2),
             "num_bets": round(num_bets, 2),
+            "sharpe_ratio": round(sharpe_ratio, 2),
             "edge": round(edge, 2)
         }
 
