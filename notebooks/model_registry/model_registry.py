@@ -14,7 +14,7 @@ class ModelRegistry:
                 'selected_features', 'constructed_features', 'is_calibration_applied',
                 'precision_val', 'recall_val', 'f1_score_val', 'accuracy_val', 
                 'precision_test', 'recall_test', 'f1_score_test', 'accuracy_test',
-                'total_profit', 'bets_placed', 'win_rate', 'roi', 'edge_over_bookies' 
+                'total_profit', 'bets_placed', 'win_rate', 'roi', 'sharpe_ratio', 'edge_over_bookies' 
             ]
             pd.DataFrame(columns=columns).to_csv(self.model_registry_file, index=False)
             print(f"Created new performance model registry file: {self.model_registry_file}")
@@ -70,6 +70,7 @@ class ModelRegistry:
             'bets_placed': model_results.get('num_bets', 0),
             'win_rate': model_results.get('win_rate', 0),
             'roi': model_results.get('roi', 0),
+            'sharpe_ratio': model_results.get('sharpe_ratio', 0),
             'edge_over_bookies': model_results.get('edge', 0)
         }
         
