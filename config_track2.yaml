@@ -10,10 +10,9 @@ features:
     - score_pre_80
     - score_ft
   selected_features:  
-    # - goal_diff_80
     - is_home_trailing
 
-    # --- Pre 80 Stats ---
+    # *** Pre 80 Stats ***
     # - leading_team_shots_pre80
     # - trailing_team_shots_pre80
     # - leading_team_fouls_pre80
@@ -52,6 +51,7 @@ features:
     # - total_shots_75_80
     # - total_fouls_75_80
 
+    # *** Simple 2x1 Odds Data ***
     # - odd_h
     # - odd_d
     # - odd_a

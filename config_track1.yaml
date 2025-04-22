@@ -11,6 +11,8 @@ features:
     - score_ft
   selected_features:  
     # - goal_diff_80
+
+    # *** Pre 80 Stats ***
     # - home_shots_pre80
     # - away_shots_pre80
     # - home_fouls_pre80
@@ -21,6 +23,8 @@ features:
     # - away_yellow_cards_pre80
     # - home_sending_off_pre80
     # - away_sending_off_pre80
+
+    # *** Windowed Stats ***
     - home_corners_70_75
     - away_corners_70_75
     - home_shots_70_75
@@ -33,6 +37,8 @@ features:
     - away_shots_75_80
     # - home_fouls_75_80
     # - away_fouls_75_80
+
+    # *** Simple 2x1 Odds Data ***
     # - odd_h
     # - odd_d
     # - odd_a

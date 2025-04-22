@@ -174,7 +174,8 @@ def update_markdown_with_model_details(markdown_content, model_name, feature_imp
     </tr>
 """
     # Add top 8 features
-    for i in range(8):
+    iterate_length = min(8, len(feature_importances))
+    for i in range(iterate_length):
         feature = feature_importances.iloc[i]
         markdown_content += f"<tr><td>{feature.Feature}</td><td>{feature.Importance:.5f}</td>"
         if i < 5:
