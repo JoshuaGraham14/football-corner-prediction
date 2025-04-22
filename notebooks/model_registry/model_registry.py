@@ -5,7 +5,7 @@ import hashlib
 class ModelRegistry:
     def __init__(self, track_num, selected_features, constructed_features, is_calibration_applied):
         os.makedirs("../reports/model_registry", exist_ok=True)
-        self.model_registry_file = f"../reports/model_registry/track{track_num}_results.csv"
+        self.model_registry_file = f"../reports/model_registry/track{track_num}_results_22Apr.csv"
         
         #create the model_registry file if it doesn't exist...
         if not os.path.exists(self.model_registry_file):
@@ -20,7 +20,18 @@ class ModelRegistry:
             print(f"Created new performance model registry file: {self.model_registry_file}")
 
         self.track_num = track_num
+        self.is_duplicate_pipeline = False
         self.pipeline_run_id = self.generate_pipeline_id(selected_features, constructed_features, is_calibration_applied)
+
+        # Check if this configuration already exists in the model registry
+        model_registry_df=pd.read_csv(self.model_registry_file)
+        existing_entry = model_registry_df[(model_registry_df['pipeline_run_id']==self.pipeline_run_id)]
+        # If entry exists and has the same timestamp, don't duplicate
+        if not existing_entry.empty:
+            print(f"Duplicate pipeline found (pipeline_id = {self.pipeline_run_id}). Skipping model registry save...\n")
+            self.is_duplicate_pipeline = True
+        else:
+            print(f"New pipeline created: (pipeline_id = {self.pipeline_run_id})\n")
 
     def generate_pipeline_id(self, selected_features, constructed_features, is_calibration_applied):
         """Generates an ID in a deterministic manner: based on config settings used"""
@@ -38,15 +49,7 @@ class ModelRegistry:
     
     def add_model_results(self, timestamp, model_name, model_results, selected_features, constructed_features, is_calibration_applied):
         """Add a model's results to the model registry under the specified pipeline run"""
-
-        # Check if this configuration already exists in the model registry
         model_registry_df=pd.read_csv(self.model_registry_file)
-        existing_entry = model_registry_df[(model_registry_df['pipeline_run_id']==self.pipeline_run_id) & (model_registry_df['model_name']==model_name)]
-        
-        # If entry exists and has the same timestamp, don't duplicate
-        if not existing_entry.empty:
-            print(f"Skipping duplicate entry for {model_name} (pipeline: {self.pipeline_run_id})")
-            return
 
         new_entry = {
             'pipeline_run_id': self.pipeline_run_id,
@@ -73,5 +76,4 @@ class ModelRegistry:
         #Append to model_registry:
         model_registry_df=pd.concat([model_registry_df, pd.DataFrame([new_entry])], ignore_index=True)
         model_registry_df.to_csv(self.model_registry_file, index=False)
-        print(f"Added {model_name} results to the model registry (pipeline run: {self.pipeline_run_id})")
     
