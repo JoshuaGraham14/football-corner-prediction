@@ -10,7 +10,7 @@ class ModelRegistry:
         #create the model_registry file if it doesn't exist...
         if not os.path.exists(self.model_registry_file):
             columns = [
-                'pipeline_run_id', 'timestamp', 'model_name', 
+                'pipeline_id', 'timestamp', 'model_name', 
                 'selected_features', 'constructed_features', 'is_calibration_applied',
                 'precision_val', 'recall_val', 'f1_score_val', 'accuracy_val', 
                 'precision_test', 'recall_test', 'f1_score_test', 'accuracy_test',
@@ -21,17 +21,17 @@ class ModelRegistry:
 
         self.track_num = track_num
         self.is_duplicate_pipeline = False
-        self.pipeline_run_id = self.generate_pipeline_id(selected_features, constructed_features, is_calibration_applied)
+        self.pipeline_id = self.generate_pipeline_id(selected_features, constructed_features, is_calibration_applied)
 
         # Check if this configuration already exists in the model registry
         model_registry_df=pd.read_csv(self.model_registry_file)
-        existing_entry = model_registry_df[(model_registry_df['pipeline_run_id']==self.pipeline_run_id)]
+        existing_entry = model_registry_df[(model_registry_df['pipeline_id']==self.pipeline_id)]
         # If entry exists and has the same timestamp, don't duplicate
         if not existing_entry.empty:
-            print(f"Duplicate pipeline found (pipeline_id = {self.pipeline_run_id}). Skipping model registry save...\n")
+            print(f"Duplicate pipeline found (pipeline_id = {self.pipeline_id}). Skipping model registry save...\n")
             self.is_duplicate_pipeline = True
         else:
-            print(f"New pipeline created: (pipeline_id = {self.pipeline_run_id})\n")
+            print(f"New pipeline created: (pipeline_id = {self.pipeline_id})\n")
 
     def generate_pipeline_id(self, selected_features, constructed_features, is_calibration_applied):
         """Generates an ID in a deterministic manner: based on config settings used"""
@@ -52,7 +52,7 @@ class ModelRegistry:
         model_registry_df=pd.read_csv(self.model_registry_file)
 
         new_entry = {
-            'pipeline_run_id': self.pipeline_run_id,
+            'pipeline_id': self.pipeline_id,
             'timestamp': timestamp,
             'model_name': model_name,
             'selected_features': ", ".join(selected_features),
