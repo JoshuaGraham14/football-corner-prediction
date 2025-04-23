@@ -12,10 +12,10 @@ load_dotenv()
 TOTAL_CORNER_API_TOKEN = os.getenv("TOTAL_CORNER_API_TOKEN")
 BASE_URL = "https://api.totalcorner.com/v1"
 
-TEAM_MAPPING_FILE = "/data/external/team_name_mapping.json"
+TEAM_MAPPING_FILE = "/data/totalCorner/team_name_mapping.json"
 
 #Use team name mapping
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'external', 'team_name_mapping.json'), "r") as f:
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'totalCorner', 'team_name_mapping.json'), "r") as f:
     TEAM_NAME_MAPPING = json.load(f)
 
 #League mapping: Kaggle dataset -> TotalCorner format
@@ -28,7 +28,7 @@ LEAGUE_MAPPING = {
 }
 
 #Load existing processed game data
-processed_game_data = pd.read_csv(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'processed', 'aggregated_full_copy.csv'))
+processed_game_data = pd.read_csv(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'processed', 'aggregated_data.csv'))
 
 #Ensure date column is in correct format...
 processed_game_data["date"] = pd.to_datetime(processed_game_data["date"], errors="coerce")
@@ -181,14 +181,14 @@ for date in match_dict.keys():
     #Save matched results to CSV
     if match_ids: 
         match_id_df = pd.DataFrame(match_ids) 
-        file ="data/external/match_ids2.csv" 
+        file ="data/totalCorner/match_ids.csv" 
         match_id_df.to_csv(file, mode='a',header=not os.path.exists(file),index=False) #use append rather than write, so more can be added in the future
         print(f"✅ Match ID fetching complete for {date}. Appended to match_ids.csv.")
 
     #Save unmatched results too...
     if unmatched_ids:
         unmatched_df = pd.DataFrame(unmatched_ids) 
-        file ="data/external/unmatched_matches2.csv"
+        file ="data/totalCorner/unmatched_matches.csv"
         unmatched_df.to_csv(file, mode='a',header=not os.path.exists(file),index=False)
         print(f"⚠ Unmatched matches for {date} appended to unmatched_matches.csv.")
     else: 
@@ -222,5 +222,5 @@ for date in match_dict.keys():
 # team_mapping_template = {league: {team: "" for team in teams} for league, teams in sorted_team_names.items()}
 
 # # Save to a JSON file
-# with open("data/external/team_name_mapping.json", "w") as f:
+# with open("data/totalCorner/team_name_mapping.json", "w") as f:
 #     json.dump(team_mapping_template, f, indent=4)

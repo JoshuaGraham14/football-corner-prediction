@@ -44,9 +44,9 @@ features:
     # - odd_a
   constructed_features: 
     # *** Game State Features ***
-    # - game_state_80_h
-    # - game_state_80_a
-    # - game_state_80_d
+    - game_state_80_h
+    - game_state_80_a
+    - game_state_80_d
 
     # *** League Features ***
     # - league_england
@@ -54,15 +54,15 @@ features:
     # - league_germany
     # - league_italy
     # - league_france
-    # - league_avg_corners
+    - league_avg_corners
     # - league_avg_home_corners
     # - league_avg_away_corners
 
     # *** Goal Diff Features ***
     # - goal_diff_80
-    # - abs_goal_diff_80
-    # - close_game_80
-    # - goal_diff_squared_80
+    - abs_goal_diff_80
+    - close_game_80
+    - goal_diff_squared_80
 
     # *** Team Corner Averages ***
     - home_corners_for_avg  
@@ -145,4 +145,4 @@ backtesting:
 
 paths:
   dataset: "../data/processed/track1_dataset.csv"
-  total_corner_odds: "../data/external/totalCorner_odds.csv"
+  total_corner_odds: "../data/totalCorner/totalCorner_odds.csv"

@@ -5,7 +5,7 @@ import hashlib
 class ModelRegistry:
     def __init__(self, track_num, selected_features, constructed_features, is_calibration_applied):
         os.makedirs("../reports/model_registry", exist_ok=True)
-        self.model_registry_file = f"../reports/model_registry/track{track_num}_results_22Apr.csv"
+        self.model_registry_file = f"../reports/model_registry/track{track_num}_results_FINAL.csv"
         
         #create the model_registry file if it doesn't exist...
         if not os.path.exists(self.model_registry_file):

@@ -29,14 +29,14 @@ features:
     - trailing_team_corners_70_75
     - leading_team_shots_70_75
     - trailing_team_shots_70_75
-    # - leading_team_fouls_70_75
-    # - trailing_team_fouls_70_75
+    - leading_team_fouls_70_75
+    - trailing_team_fouls_70_75
     - leading_team_corners_75_80
     - trailing_team_corners_75_80
     - leading_team_shots_75_80
     - trailing_team_shots_75_80
-    # - leading_team_fouls_75_80
-    # - trailing_team_fouls_75_80
+    - leading_team_fouls_75_80
+    - trailing_team_fouls_75_80
 
     # *** Total Stats ***
     # - total_shots_pre_80
@@ -135,4 +135,4 @@ backtesting:
 
 paths:
   dataset: "../data/processed/track2_dataset.csv"
-  total_corner_odds: "../data/external/totalCorner_odds.csv"
+  total_corner_odds: "../data/totalCorner/totalCorner_odds.csv"
