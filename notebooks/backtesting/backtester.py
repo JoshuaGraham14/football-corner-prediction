@@ -10,7 +10,7 @@ import scipy.stats as stats
 from simulator import Simulator
 
 class Backtester(Simulator):
-    def __init__(self, config, odds_file, model_name="", model_file=None, track_num=1, target_mean=1.32, margin=0.1):
+    def __init__(self, config, odds_file, model_name="", model_file=None, track_num=1):
         """
         Initialise backtester:
         - odds_file = csv containing historical odds (this file is always used)
@@ -21,13 +21,16 @@ class Backtester(Simulator):
         bankroll = int(config["backtesting"]["initial_bankroll"])
         fixed_bet_percent = float(config["backtesting"]["fixed_bet_percent"])
 
+        target_mean_odds = float(config["backtesting"]["target_mean_odds"])
+        bookie_margin = float(config["backtesting"]["bookie_margin"])
+
         super().__init__(bankroll) #init parent Simulator class
         
         #Load historical odds 
         self.odds_data=pd.read_csv(odds_file)
 
         # Scale odds
-        self.scale_odds(target_mean, margin)
+        self.scale_odds(target_mean_odds, bookie_margin)
 
         if model_file:
             #Load our model-specific predictions:

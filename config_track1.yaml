@@ -59,7 +59,6 @@ features:
     # - league_avg_away_corners
 
     # *** Goal Diff Features ***
-    # - goal_diff_80
     - abs_goal_diff_80
     - close_game_80
     - goal_diff_squared_80
@@ -142,6 +141,8 @@ apply_calibration: false
 backtesting:
   initial_bankroll: 1000
   fixed_bet_percent: 0.1
+  target_mean_odds: 1.26
+  bookie_margin: 0.05
 
 paths:
   dataset: "../data/processed/track1_dataset.csv"

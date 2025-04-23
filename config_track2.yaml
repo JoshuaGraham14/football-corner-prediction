@@ -132,6 +132,8 @@ apply_calibration: false
 backtesting:
   initial_bankroll: 1000
   fixed_bet_percent: 0.1
+  target_mean_odds: 1.67
+  bookie_margin: 0.05
 
 paths:
   dataset: "../data/processed/track2_dataset.csv"
