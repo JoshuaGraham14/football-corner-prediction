@@ -19,16 +19,16 @@ from sklearn.calibration import calibration_curve
 def plot_correlation(df_selected, selected_features, constructed_features, target_variables, show_output=True):
     #Corelation matrix:
     correlation_matrix = df_selected[selected_features + constructed_features + target_variables].corr()
-    correlation_with_target = correlation_matrix[target_variables].drop(target_variables, axis=0)
+    correlation_with_target = correlation_matrix[target_variables].drop(target_variables, axis=0).abs()
 
     # Plot correlation heatmap:
     plt.figure(figsize=(12, 8))
     sns.heatmap(correlation_with_target, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5)
     plt.xticks(rotation=45)
     plt.yticks(rotation=0)
-    plt.xlabel("Target Variables")
-    plt.ylabel("Constructed Features")
-    plt.title("Correlation between Constructed Features and Target Variables")
+    plt.xlabel("Target Variable")
+    plt.ylabel("Features")
+    plt.title("Correlation between Features and Target variable")
     plt.tight_layout()
 
     # Save graph as an image
@@ -91,9 +91,9 @@ def plot_prediction_distributions(y_probs_final, y_test_final, model_name, show_
     class_1=mlines.Line2D([], [],color='red', marker='o',linestyle='None',markersize=8,alpha=0.7, label='Target: 1+ Corners')
     ax1.set_xlabel('Match Index')
     ax1.set_ylabel('Predicted probability of 1+ corners')
-    ax1.set_title(f'{model_name} - Predicted Probability vs Actual Target')
+    ax1.set_title(f'Predicted Probability vs Actual Target ({model_name})')
     ax1.legend(handles=[class_0, class_1, 
-                        plt.Line2D([], [], color='grey',linestyle='dashed',linewidth=2,label='Threshold'),
+                        plt.Line2D([], [], color='grey',linestyle='dashed',linewidth=2, label=f'Threshold = {optimal_threshold:.2f}'),
                         # plt.Line2D([], [], color='blue', linestyle='-', linewidth=1.5, label=f'Mean (Class 0) = {mean_prob_class0:.3f}'),
                         # plt.Line2D([], [], color='red', linestyle='-', linewidth=1.5, label=f'Mean (Class 1) = {mean_prob_class1:.3f}')
         ])
@@ -101,10 +101,10 @@ def plot_prediction_distributions(y_probs_final, y_test_final, model_name, show_
     #KDE plot: density of probabilities, split by actual true target
     sns.kdeplot(y_probs_class0, ax=ax2, fill=True,color='blue', alpha=0.5,label='Target: No 1+ Corners')
     sns.kdeplot(y_probs_class1, ax=ax2,fill=True, color='red', alpha=0.5,label='Target: 1+ Corners')
-    ax2.axvline(optimal_threshold, color='red', linestyle='dashed', linewidth=2, label=f'Threshold = {optimal_threshold:.2f}')
+    ax2.axvline(optimal_threshold, color='grey', linestyle='dashed', linewidth=2, label=f'Threshold = {optimal_threshold:.2f}')
     ax2.set_xlabel('Predicted probability of 1+ corners')
     ax2.set_ylabel('Density')
-    ax2.set_title('KDE Distribution of Predicted Probabilities by Class')
+    ax2.set_title(f'KDE Distribution of Predicted Probabilities by Class ({model_name})')
     ax2.legend()
     plt.tight_layout()
 
@@ -201,9 +201,9 @@ def plot_point_biserial_correlation (df_selected, selected_features, constructed
     fig, axes = plt.subplots(1, 3, figsize=(30, 8))
     sns.heatmap(corr_df[['Abs Correlation']],annot=True, cmap='coolwarm',ax=axes[0])
     axes[0].set_title('Point-Biserial Correlation Heatmap')
-    sns.heatmap(corr_df[['P-value']],annot=True, cmap='coolwarm',ax=axes[1])
+    sns.heatmap(corr_df[['P-value']],annot=True, cmap='coolwarm_r',ax=axes[1])
     axes[1].set_title('P-value Heatmap')
-    sns.heatmap(corr_df[['Combined Score']],annot=True, cmap='coolwarm_r',ax=axes[2])
+    sns.heatmap(corr_df[['Combined Score']],annot=True, cmap='coolwarm',ax=axes[2])
     axes[2].set_title('Combined Score Heatmap')
     plt.tight_layout()
 

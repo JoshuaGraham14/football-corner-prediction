@@ -73,7 +73,7 @@ features:
     - leading_team_post80_corners_against_avg
 
     # *** Special Technical Indicator Features ***
-    # - odds_ratio
+    - odds_ratio
     - trailing_team_attack_intensity
     - leading_team_attack_intensity
     - trailing_team_defensive_pressure

@@ -46,6 +46,7 @@ th,td {{
     padding:4px;
     padding-left: 8px;
     text-align: left;
+    font-size: 0.7em;
 }}
 th{{
     background-color: #f2f2f2;
@@ -201,6 +202,8 @@ def update_markdown_with_model_details(markdown_content, model_name, feature_imp
 #### Classification Reports
 <img src="data:image/png;base64,{encoded_classification_report_image}" style="max-width:100%; height:auto;">
 
+<div style="page-break-after:always;"></div>
+<hr style="border:0.2px solid #2c3e50; margin:20px 0;">
 ##### Classification Report (*Validation Set*) 
 
 {classification_report_str_1}
