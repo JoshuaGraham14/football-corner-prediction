@@ -118,7 +118,7 @@ class Backtester(Simulator):
         plt.grid(True)
 
         # Save graph as an image
-        backtesting_image_path = f"../reports/images/backtesting/backtesting_track{self.track_num}_{self.model_name}.png"
+        backtesting_image_path = f"../reports/figures/backtesting/track{self.track_num}/backtesting_{self.model_name}.png"
         plt.savefig(backtesting_image_path)
         
         if show_output:

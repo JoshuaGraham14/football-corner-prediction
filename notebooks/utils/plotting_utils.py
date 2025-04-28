@@ -16,7 +16,7 @@ from sklearn.metrics import ConfusionMatrixDisplay
 from scipy.stats import pointbiserialr
 from sklearn.calibration import calibration_curve
 
-def plot_correlation(df_selected, selected_features, constructed_features, target_variables, show_output=True):
+def plot_correlation(df_selected, selected_features, constructed_features, target_variables, track_num, show_output=True):
     #Corelation matrix:
     correlation_matrix = df_selected[selected_features + constructed_features + target_variables].corr()
     correlation_with_target = correlation_matrix[target_variables].drop(target_variables, axis=0).abs()
@@ -32,7 +32,7 @@ def plot_correlation(df_selected, selected_features, constructed_features, targe
     plt.tight_layout()
 
     # Save graph as an image
-    feature_correlation_image_path = f"../reports/images/feature_correlation.png"
+    feature_correlation_image_path = f"../reports/figures/feature_correlation/track{track_num}/feature_correlation.png"
     plt.savefig(feature_correlation_image_path)
     
     if show_output:
@@ -42,7 +42,46 @@ def plot_correlation(df_selected, selected_features, constructed_features, targe
 
     return feature_correlation_image_path
 
-def plot_calibration_curve(y_true, y_prob, model_name, show_output=False):
+def plot_point_biserial_correlation (df_selected, selected_features, constructed_features, track_num, show_output=True):
+    #Calc Point-Biserial correlation and P-values:
+    correlation_results = [
+        (col, *pointbiserialr(df_selected[col], df_selected['target']))
+        for col in df_selected[selected_features+constructed_features] if col !='target'
+    ]
+    corr_df = pd.DataFrame(correlation_results, columns=['Feature', 'Correlation','P-value'])
+    corr_df.set_index('Feature', inplace=True)
+
+    corr_df['Abs Correlation'] =abs(corr_df['Correlation'])
+    corr_df['Combined Score'] =corr_df['Abs Correlation']*(1-corr_df['P-value'])
+
+    if show_output:
+        #Print top 10 features
+        print("--- TOP 10 FEATURES ---")
+        print(corr_df['Combined Score'].nlargest(10))
+        print("-----------------------")
+
+    # Plot heatmaps
+    fig, axes = plt.subplots(1, 3, figsize=(30, 8))
+    sns.heatmap(corr_df[['Abs Correlation']],annot=True, cmap='coolwarm',ax=axes[0])
+    axes[0].set_title('Point-Biserial Correlation Heatmap')
+    sns.heatmap(corr_df[['P-value']],annot=True, cmap='coolwarm_r',ax=axes[1])
+    axes[1].set_title('P-value Heatmap')
+    sns.heatmap(corr_df[['Combined Score']],annot=True, cmap='coolwarm',ax=axes[2])
+    axes[2].set_title('Combined Score Heatmap')
+    plt.tight_layout()
+
+    # Save graph as an image
+    point_biserial_correlation_image_path = f"../reports/figures/feature_correlation/track{track_num}/point_biserial_correlation.png"
+    plt.savefig(point_biserial_correlation_image_path)
+    
+    if show_output:
+        plt.show()
+    else:
+        plt.close()
+
+    return point_biserial_correlation_image_path
+
+def plot_calibration_curve(y_true, y_prob, model_name, track_num, show_output=False):
     """Plots a calibration curve for the inputted model"""
     prob_true, prob_pred = calibration_curve(y_true, y_prob, n_bins=10)
     
@@ -57,7 +96,7 @@ def plot_calibration_curve(y_true, y_prob, model_name, show_output=False):
     plt.tight_layout()
     
     # Save graph as an image
-    image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_calibration.png"
+    image_path = f"../reports/figures/model_training/track{track_num}/{model_name.replace(' ', '_').lower()}_calibration_curve.png"
     plt.savefig(image_path)
     
     if show_output:
@@ -65,7 +104,7 @@ def plot_calibration_curve(y_true, y_prob, model_name, show_output=False):
     else:
         plt.close()
 
-def plot_prediction_distributions(y_probs_final, y_test_final, model_name, show_output=True, optimal_threshold=0.5):
+def plot_prediction_distributions(y_probs_final, y_test_final, model_name, track_num, show_output=True, optimal_threshold=0.5):
     #Split y_probs_final by target = 0 or 1...
     y_probs_class0 = y_probs_final[y_test_final == 0]
     y_probs_class1 = y_probs_final[y_test_final == 1]
@@ -110,7 +149,7 @@ def plot_prediction_distributions(y_probs_final, y_test_final, model_name, show_
 
 
     # Save graph as an image
-    image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_prediction_distributions.png"
+    image_path = f"../reports/figures/model_training/track{track_num}/{model_name.replace(' ', '_').lower()}_prediction_distributions.png"
     plt.savefig(image_path)
     
     if show_output:
@@ -137,7 +176,7 @@ def plot_precision_recall_curve(precision, recall, pr_auc, model_name, ax):
     ax.set_title(f'Precision-Recall Curve - {model_name}')
     ax.legend(loc="lower left")
 
-def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, show_output=True):
+def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, track_num, show_output=True):
     #Plots ROC curve and Precision-recall side by side
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))  
     plot_roc_curve(fpr, tpr, roc_auc, model_name,ax1)
@@ -145,7 +184,7 @@ def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, sh
     plt.tight_layout()
 
     # Save graph as an image
-    image_path = f"../reports/images/{model_name.replace(' ', '_').lower()}_roc_prc.png"
+    image_path = f"../reports/figures/model_training/track{track_num}/{model_name.replace(' ', '_').lower()}_roc_prc.png"
     plt.savefig(image_path)
     # plt.close()
 
@@ -156,7 +195,7 @@ def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, sh
 
     return image_path
 
-def plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, model_name, show_output=True):
+def plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, model_name, track_num, show_output=True):
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     #Plot for validation set:
@@ -169,7 +208,7 @@ def plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, mo
 
     plt.subplots_adjust(left=0.05, right=0.95, top=0.9, bottom=0.1, wspace=0.3) #line reduces plot whitespace borders
     # Save graph as an image
-    image_path =f"../reports/images/{model_name.replace(' ', '_').lower()}_confusion_matrix.png"
+    image_path =f"../reports/figures/model_training/track{track_num}/{model_name.replace(' ', '_').lower()}_confusion_matrix.png"
     plt.savefig(image_path)
     
     if show_output:
@@ -179,42 +218,7 @@ def plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, mo
 
     return image_path
 
-def plot_point_biserial_correlation (df_selected, selected_features, constructed_features):
-    #Calc Point-Biserial correlation and P-values:
-    correlation_results = [
-        (col, *pointbiserialr(df_selected[col], df_selected['target']))
-        for col in df_selected[selected_features+constructed_features] if col !='target'
-    ]
-    corr_df = pd.DataFrame(correlation_results, columns=['Feature', 'Correlation','P-value'])
-    corr_df.set_index('Feature', inplace=True)
-
-    corr_df['Abs Correlation'] =abs(corr_df['Correlation'])
-    corr_df['Combined Score'] =corr_df['Abs Correlation']*(1-corr_df['P-value'])
-
-    #Print top 10 features
-    print("--- TOP 10 FEATURES ---")
-    print(corr_df['Combined Score'].nlargest(10))
-    print("-----------------------")
-
-    # Plot heatmaps
-    fig, axes = plt.subplots(1, 3, figsize=(30, 8))
-    sns.heatmap(corr_df[['Abs Correlation']],annot=True, cmap='coolwarm',ax=axes[0])
-    axes[0].set_title('Point-Biserial Correlation Heatmap')
-    sns.heatmap(corr_df[['P-value']],annot=True, cmap='coolwarm_r',ax=axes[1])
-    axes[1].set_title('P-value Heatmap')
-    sns.heatmap(corr_df[['Combined Score']],annot=True, cmap='coolwarm',ax=axes[2])
-    axes[2].set_title('Combined Score Heatmap')
-    plt.tight_layout()
-
-    # Save graph as an image
-    point_biserial_correlation_image_path = f"../reports/images/point_biserial_correlation.png"
-    plt.savefig(point_biserial_correlation_image_path)
-    
-    plt.show()
-
-    return point_biserial_correlation_image_path
-
-def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, show_output=True, track_num=1):
+def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, track_num, show_output=True):
     """
     Create visualisation of train/validation/test split
     """
@@ -279,7 +283,7 @@ def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, sho
     # Save and display plot...
     plt.tight_layout()
 
-    bar_charts_image_path = f"../reports/images/dataset_split/track{track_num}_barcharts.png"
+    bar_charts_image_path = f"../reports/figures/dataset_split/track{track_num}/dataset_split_barcharts.png"
     os.makedirs(os.path.dirname(bar_charts_image_path), exist_ok=True)
     plt.savefig(bar_charts_image_path, dpi=300, bbox_inches='tight')
 
@@ -348,7 +352,7 @@ def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, sho
 
     plt.tight_layout()
 
-    chronological_image_path = f"../reports/images/dataset_split/track{track_num}_chronological.png"
+    chronological_image_path = f"../reports/figures/dataset_split/track{track_num}/dataset_split_chronological.png"
     os.makedirs(os.path.dirname(chronological_image_path), exist_ok=True)
     plt.savefig(chronological_image_path, dpi=300, bbox_inches='tight')
 
@@ -359,7 +363,7 @@ def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, sho
 
     return bar_charts_image_path, chronological_image_path
     
-def plot_backtesting_all_models(histories_dict, initial_bankroll=1000, track_num=1, show_output=True):
+def plot_backtesting_all_models(track_num, histories_dict, initial_bankroll=1000, show_output=True):
     """
     Creates a comparison chart of multiple model backtesting simulations
     -> histories_dict (dict): keys = model names, values = bankroll history lists
@@ -377,7 +381,7 @@ def plot_backtesting_all_models(histories_dict, initial_bankroll=1000, track_num
     plt.tight_layout() 
      
     # Save plot as an image:
-    image_path =f"../reports/images/backtesting/track{track_num}_all.png" 
+    image_path =f"../reports/figures/backtesting/track{track_num}/backtesting_all_models.png" 
     plt.savefig(image_path)
     
     if show_output:

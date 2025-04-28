@@ -41,4 +41,4 @@ def preprocess_data(df, config):
 
     print(f"✅ Dataset Preprocessed: {df_selected.shape[0]} rows, {df_selected.shape[1]} columns")
 
-    return df_selected, selected_features, constructed_features, target_variable
+    return df_selected, selected_features, constructed_features, target_variable[0]
