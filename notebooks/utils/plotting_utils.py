@@ -156,22 +156,21 @@ def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, sh
 
     return image_path
 
-def plot_classification_report(optimal_model, X_val, y_val, X_test, y_test, model_name, show_output=True):
+def plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, model_name, show_output=True):
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     #Plot for validation set:
-    ConfusionMatrixDisplay.from_estimator(optimal_model, X_val, y_val,ax=axes[0],cmap='Blues',values_format='d')
+    ConfusionMatrixDisplay.from_predictions(y_true=y_val, y_pred=y_pred_threshold, ax=axes[0],cmap='Blues',values_format='d')
     axes[0].set_title(f'{model_name} - Validation Set')
 
     #Plot for test set:
-    ConfusionMatrixDisplay.from_estimator(optimal_model, X_test, y_test,ax=axes[1],cmap='Blues',values_format='d')
+    ConfusionMatrixDisplay.from_predictions(y_true=y_test, y_pred=y_pred_final, ax=axes[1],cmap='Blues',values_format='d')
     axes[1].set_title(f'{model_name} - Test Set')
 
     plt.subplots_adjust(left=0.05, right=0.95, top=0.9, bottom=0.1, wspace=0.3) #line reduces plot whitespace borders
     # Save graph as an image
     image_path =f"../reports/images/{model_name.replace(' ', '_').lower()}_confusion_matrix.png"
     plt.savefig(image_path)
-    # plt.close()
     
     if show_output:
         plt.show()
