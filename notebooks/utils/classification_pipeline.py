@@ -10,7 +10,6 @@ import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, roc_curve, roc_auc_score, precision_recall_curve, auc, precision_score, recall_score, f1_score, accuracy_score
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.calibration import CalibratedClassifierCV
 
 from datetime import datetime 
 
@@ -65,6 +64,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
     track_num = config['track_num']
     models_to_train = config['model']['classification']['models']
     apply_calibration = config['apply_calibration']
+    testset_size = int(config['backtesting']['testset_size'])
 
     #Initialise the dashboard:
     results_registry = ModelRegistry(track_num=track_num, selected_features=selected_features, constructed_features=constructed_features, is_calibration_applied=apply_calibration)
@@ -94,8 +94,8 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
     point_biserial_correlation_image_path = plot_point_biserial_correlation(df, selected_features, constructed_features, track_num=track_num, show_output=show_output)
 
     #Split data to exclude the last 500 rows for testing
-    train_data = df.iloc[:-500]
-    test_data = df.iloc[-500:]
+    train_data = df.iloc[:-testset_size]
+    test_data = df.iloc[-testset_size:]
 
     # Split data -> train & validation
     X_train, X_val, y_train, y_val = train_test_split(
@@ -121,7 +121,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
 
     # Initialise and begin the Markdown for the report
     if generate_pdf:
-        markdown_content = create_markdown_report(config, bar_charts_image_path, chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train, apply_calibration)
+        markdown_content = create_markdown_report(config, bar_charts_image_path, chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train)
 
     #********************************************************************************************************
     # START OF MODEL TRAINING LOOP
@@ -199,7 +199,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
         if show_output:
             print(f"{model_name} model saved.")
 
-        prediction_file = f"../data/predictions/{model_name.replace(' ', '_').lower()}_predictions.csv"
+        prediction_file = f"../data/predictions/track{track_num}/{model_name.replace(' ', '_').lower()}_predictions.csv"
         # --- STEP 10: Save Predictions ---
         results_df = pd.DataFrame({
             'kaggle_id': test_data['id_odsp'],

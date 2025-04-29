@@ -81,7 +81,7 @@ li{{
 </style>
 """
 
-def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_split_chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train, is_calibration_applied):
+def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_split_chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train):
     #Get date for pdf title...
     now = datetime.now()
     date_time_str = now.strftime("%Y-%m-%d, %H:%M")
@@ -117,8 +117,6 @@ def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_
 #### Models Trained (& Hyperparameters)
 {}
 
-#### Is Calibration Applied?
-{}
 <div style="page-break-after:always;"></div>
 
 #### Feature Correlation
@@ -140,7 +138,6 @@ def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_
         ", ".join(selected_features),
         ", ".join(constructed_features),
         "\n".join([f"- **{model}**: {config['model']['classification']['hyperparameters'].get(model,{})}" for model in models_to_train]),
-        is_calibration_applied,
         encoded_feature_correlation_image,
         encoded_point_biserial_correlation_image,
         encoded_dataset_split_bar_charts_image,

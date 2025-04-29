@@ -141,6 +141,7 @@ model:
 apply_calibration: false
 
 backtesting:
+  testset_size: 500
   initial_bankroll: 1000
   fixed_bet_percent: 0.1
   target_mean_odds: 1.26

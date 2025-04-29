@@ -11,7 +11,7 @@ class ModelRegistry:
         if not os.path.exists(self.model_registry_file):
             columns = [
                 'pipeline_id', 'timestamp', 'model_name', 
-                'selected_features', 'constructed_features', 'is_calibration_applied',
+                'selected_features', 'constructed_features',
                 'precision_val', 'recall_val', 'f1_score_val', 'accuracy_val', 
                 'precision_test', 'recall_test', 'f1_score_test', 'accuracy_test',
                 'total_profit', 'bets_placed', 'win_rate', 'roi', 'sharpe_ratio', 'edge_over_bookies' 
