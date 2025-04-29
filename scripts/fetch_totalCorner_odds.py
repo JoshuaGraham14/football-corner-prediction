@@ -9,6 +9,9 @@ TOTAL_CORNER_API_TOKEN = os.getenv("TOTAL_CORNER_API_TOKEN")
 BASE_URL = "https://api.totalcorner.com/v1"
 
 def fetch_total_corner_data(match_id):
+    """
+    Function to fetch odds data from TotalCorner match/odds/{match_id} API endpoint.
+    """
     url = f"{BASE_URL}/match/odds/{match_id}?token={TOTAL_CORNER_API_TOKEN}&columns=cornerList"
     data =handle_api_request(url) #use my handle_api_request func
 
@@ -22,8 +25,10 @@ def fetch_total_corner_data(match_id):
 
     return match_odds
 
-#Func: extract the earliest available odds for 80min
 def extract_earliest_80th_minute_data(match_data):
+    """
+    Gets the earliest available odds for 80min. If no 80 minute data available, gets the next earliest.
+    """
     if not match_data or not isinstance(match_data, list):
         print(f"Invalid match_data format: {match_data}")
         return None
@@ -46,19 +51,26 @@ def extract_earliest_80th_minute_data(match_data):
     print(f"-> Earliest 80th-minute odds found: {min_80_entries[0]}")
     return min_80_entries[0] #return first one (i.e. earlist)
 
-#Converts decimal odds to implied probability
-def implied_probability(decimal_odds):
+def get_implied_probability(decimal_odds):
+    """
+    Converts decimal odds to implied probability
+    """
     return 1/decimal_odds
 
-#Estimate expected total corners
 def expected_corners(market_line, over_odds, under_odds):
-    over_prob=implied_probability(over_odds)
-    under_prob=implied_probability(under_odds)
+    """
+    Estimates the expected total corners by adjusting the line based on the difference between the over and under line.
+    E.g. With over 8.5 corner odds of 2.0 and under odds of 3.0, the respective implied probabilities are approximately 0.5 and 0.33.
+    Therefore, expected total corners = 0.5-0.33=0.17. So, it is 8.5-0.17 = 8.33.
+    """
+    over_prob=get_implied_probability(over_odds)
+    under_prob=get_implied_probability(under_odds)
     return market_line - (over_prob-under_prob)
 
-#Func: Calculates probability of 1+ corner using poisson distr
 def odds_1_plus_corner(expected_additional):
-    #Poission distr wiht: P(0, λ)
+    """
+    Calculates the probability of 1+ corner using poisson distribution: P(0, λ).
+    """
     prob_0_corners = stats.poisson.pmf(0, expected_additional) 
     prob_1_plus = 1 - prob_0_corners #P(1+ corners) = 1- P(0 corners)
     

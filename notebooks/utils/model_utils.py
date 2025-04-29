@@ -2,10 +2,10 @@
 ## Utility Funcs for Model Training:
 
 - `Initialise_model`
-    - Initialises classifier model depending on input model type
+    - Initialises a classifier model depending on the input model type.
 
 - `Grid_search`
-    - Performs GridSearchCV for hyperparameter tuning depending on input model
+    - Performs GridSearchCV for hyperparameter tuning depending on input model.
 
 - `Get_feature_importance`
     - Prints the top 8 and bottom 5 features
@@ -26,6 +26,10 @@ import pandas as pd
 import numpy as np
 
 def initialise_model(model_name, hyperparameters):
+    """
+    Initialises classifier model depending on the input model type.
+    """
+    #Use 'class_weight="balanced"' since we are working with unbalanced
     if model_name == "random_forest":
         return RandomForestClassifier(**hyperparameters, random_state=42, class_weight="balanced")
     elif model_name == "logistic_regression":
@@ -131,6 +135,14 @@ def get_feature_importance(model, model_name, selected_features, constructed_fea
     return combined_features
 
 def optimise_threshold(y_pred_val, y_val, show_output=True, min_recall=0.1):
+    """
+    Optimises the threshold based on Precision-Recall
+   
+    --> Our aim is to increase Precision-Recall (more importantly precision), since we want to increase the likelihood of winning
+    a 1+ corners at 80min bet -> prediciting the number of 1's correctly as important, i.e. when we do place a bet, we make sure 
+    we have a high chance of winning (i.e. high confidence). Therefore, I performed threshold adjustament to try and maximise 
+    precision (but ensure recall is at least 10% to avoid precision=1).
+    """
     #--- Threshold Maximisation ---
     thresholds = np.linspace(0.5, 0.95, 20) #test thresholds from 0.5 to 0.95
     results = []

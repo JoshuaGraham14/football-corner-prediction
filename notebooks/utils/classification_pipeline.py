@@ -18,7 +18,7 @@ from notebooks.utils.data_utils import load_dataset, preprocess_data
 from notebooks.utils.model_utils import initialise_model, grid_search, get_feature_importance, optimise_threshold
 from notebooks.utils.plotting_utils import (
     plot_correlation, plot_point_biserial_correlation, plot_prediction_distributions,
-    plot_roc_and_prc, plot_classification_report, plot_dataset_split,
+    plot_roc_and_prc, plot_confusion_matrices, plot_dataset_split,
     plot_backtesting_all_models 
 )
 from notebooks.utils.pdf_utils import (
@@ -29,29 +29,42 @@ from notebooks.backtesting.backtester import Backtester
 from notebooks.model_registry.model_registry import ModelRegistry 
  
 """
-Classification Pipeline
-
-- **Feature Selection**: 
-    - Trains only on selected and constructed features
-- **Data Splitting**:
-    - Exclude the last 500 rows for testing
+*** Classification Pipeline ***
+- Setup:
+    - Loads the config
+    - Loads the corresponding track dataset with the selected features
+    - Initialises model registry
+- Feature Selection: 
+    - Plots correlation heat maps
+- Data Splitting:
+    - Exclude the last 500 rows for testing (or 250 for track 2)
     - Split remaining data into 80% train and 20% validation sets
-- **Model Training Loop**:
-    1) Initialise each model from config yaml
-    2) Apply MinMax scaling... *only for models that require scaling*
-    3) Perform grid search for hyperparameter tuning (if specified) and Train Model
+    - Plot the train/val/test split
+- Initialise the PDF report:
+
+*******
+- Model Training Loop:
+    1) Initialise model from config yaml
+    2) Apply MinMax scaling (only for models that require scaling).
+    3) Perform grid search for hyperparameter tuning (if specified) and train model
     4) Predict on validation set and display feature importance
-    5) Optimise precision-recall threshold
+    5) Precision threshold optimisation (maintining 10% min threshold)
     6) Evaluate model on validation set using optimised threshold
     7) Plot ROC and Precision-Recall graphs
-    8) Predict on the test set (last 500 rows) and evaluate
-    9) Save the trained model
+    8) Predict on the test set and evaluate
+    9) Save the model.
     10) Save predictions (for backtesting).
     11) Plot prediction distibutions (Scatter graph and KDE).
-    12) Backtesting called
-    13) PDF Report generated.
-"""
+    12) Backtesting called and run
+    13) Calculate evaluation metrics for model registry.
+    13) Add results to PDF report.
+*******
 
+- Results:
+    - Plot merged backtesting graph
+    - Add each results to model registry (unless duplicate pipeline)
+    - Generate and save PDF report
+"""
 def run_classification_pipeline(config_file_str, show_output=False, generate_pdf=False):
     #Load the config
     config = load_config(config_file_str)
@@ -66,7 +79,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
     apply_calibration = config['apply_calibration']
     testset_size = int(config['backtesting']['testset_size'])
 
-    #Initialise the dashboard:
+    #Initialise the model registry:
     results_registry = ModelRegistry(track_num=track_num, selected_features=selected_features, constructed_features=constructed_features, is_calibration_applied=apply_calibration)
     model_results_dict = {}
 
@@ -98,6 +111,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
     test_data = df.iloc[-testset_size:]
 
     # Split data -> train & validation
+    # Info: 'stratify' param ensures train/validation split maintains same proportion of class labels - important for our imbalanced datasets.
     X_train, X_val, y_train, y_val = train_test_split(
         train_data[selected_features + constructed_features],
         train_data[target_variable],
@@ -121,7 +135,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
 
     # Initialise and begin the Markdown for the report
     if generate_pdf:
-        markdown_content = create_markdown_report(config, bar_charts_image_path, chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train)
+        markdown_content = create_markdown_report(config, track_num, bar_charts_image_path, chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train)
 
     #********************************************************************************************************
     # START OF MODEL TRAINING LOOP
@@ -162,7 +176,9 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
         # --- STEP 5: Precision-Recall Threshold Optimisation ---
         best_threshold, optimal_threshold = optimise_threshold(y_pred_val, y_val, show_output=show_output, min_recall=0.05)
 
+        # Info: Uncomment the line below to see what happens when every game is bet on.
         # optimal_threshold=0
+
         # --- STEP 6: Model Evaluation ---
         y_pred_threshold =(y_pred_val >= optimal_threshold).astype(int)
         if show_output:
@@ -176,18 +192,18 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
         precision,recall,_ =precision_recall_curve(y_val, y_pred_val)
         pr_auc=auc(recall, precision)
 
-        # --- STEP 8: Test on test set (last 500 rows) ---
-        # Predict on the final test data (last 500 rows)
+        # --- STEP 8: Test on test set ---
+        # Predict on the final test data
         y_probs_final =optimal_model.predict_proba(X_test)[:, 1]
         y_pred_final=(y_probs_final >=optimal_threshold).astype(int)
 
-        #Evaluate on the last 500 rows (final simulation)
+        #Evaluate on the test set (final simulation)
         if show_output:
             print("\n### Prediction on last 500 rows: ###")
             print(classification_report(y_test, y_pred_final))
         classification_report_str_2 = classification_report(y_test, y_pred_final, output_dict=False)
 
-        classification_report_image_path = plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, model_name, track_num=track_num, show_output=show_output)
+        classification_report_image_path = plot_confusion_matrices(y_val, y_pred_threshold, y_test, y_pred_final, model_name, track_num=track_num, show_output=show_output)
         roc_prc_image_path = plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name,track_num=track_num, show_output=show_output)
 
         # --- STEP 9: Save Model ---
@@ -213,7 +229,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
         # --- STEP 11: Plot Prediction Distibution Graph ---
         scatter_image_path = plot_prediction_distributions(y_probs_final, y_test, model_name, track_num=track_num, show_output=show_output, optimal_threshold=optimal_threshold)
 
-        # --- STEP 12: Backtesting called ---
+        # --- STEP 12: Backtesting called and run ---
         if show_output:
             print(f"\n-> Running Backtest for {model_name}...")
         odds_file = config["paths"]["total_corner_odds"]
@@ -221,7 +237,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
         backtesting_image_path, backtesting_results_str_list, backtesting_results_dict, bankroll_history = backtester.run(show_output)
         backtesting_histories_dict[model_name] = bankroll_history
 
-        # Calculate eval metrics for validation and test set
+        # --- STEP 13: Calculate eval metrics for model registry ---
         model_results_dict[model_name]['precision_val'] = round(precision_score(y_val, y_pred_threshold), 3)
         model_results_dict[model_name]['recall_val'] = round(recall_score(y_val, y_pred_threshold), 3)
         model_results_dict[model_name]['f1_score_val'] = round(f1_score(y_val, y_pred_threshold), 3)
@@ -235,7 +251,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
         # Add backtesting results to model_results_dict
         model_results_dict[model_name].update(backtesting_results_dict)
 
-        # --- STEP 13: PDF Report generated. ---
+        # --- STEP 14: Update PDF Report. ---
         if generate_pdf:
             #Finally, update markdown with generated outputs...
             markdown_content = update_markdown_with_model_details(
@@ -255,6 +271,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
     #********************************************************************************************************
     # END OF MODEL TRAINING LOOP
     #********************************************************************************************************
+    
     #Plot merged backtesting graph:
     backtesting_all_image_path = plot_backtesting_all_models(track_num, backtesting_histories_dict, initial_bankroll=int(config["backtesting"]["initial_bankroll"]), show_output=show_output)
     #Add it to pdf report...
@@ -264,7 +281,7 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
             backtesting_all_image_path
         )   
     
-    #Now all models have been trained... add each results to model registry (ONLY IF PIPELINE IS NOT DUPLICATE):
+    #Add results to model registry (ONLY IF PIPELINE IS NOT DUPLICATE):
     if not results_registry.is_duplicate_pipeline:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M") #get timestamped before loop so they all are the same
         for model_name, model_results in model_results_dict.items():
@@ -277,7 +294,8 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
                 apply_calibration
             )
         print("\n📄 Saved Model Registry Results")
-
+    
+    #Generate and save PDF report
     if generate_pdf:
         now = datetime.now()
         date_time_str = now.strftime("%d-%m-%Y_%H:%M")

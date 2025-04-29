@@ -13,7 +13,7 @@ class Simulator:
 
     def place_bet(self, match_id, odds, stake, actual_outcome):
         """
-        Places a bet of size *stake* and updates the bankroll based on w/l
+        Places a bet of size 'stake' and updates the bankroll based on win/loss
         """
         if stake>self.bankroll:
             print(f"Insufficient bankroll for bet: {match_id}. Skipping...")
@@ -54,7 +54,7 @@ class Simulator:
 
     def print_summary(self, show_output=True):
         """
-        Prints an overall performance summary:
+        Prints an overall performance summary of the backtesting run:
         """
         num_bets=len(self.history)
         total_staked =sum(row[2] for row in self.history)

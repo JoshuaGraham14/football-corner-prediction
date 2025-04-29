@@ -11,8 +11,12 @@ MAX_RETRIES = 5
 #track timestamps of the last 5 requests using a queue
 recent_requests = deque(maxlen=MAX_REQUESTS_PER_10_SECONDS)
 
-'''Func to efficiently & automatically handle TotalCorners API rate limiting of 5 requests per 10 seconds & 30 requests per min'''
 def handle_api_request(url, max_retries=MAX_RETRIES):
+    """
+    Func to efficiently and automatically handle TotalCorners API rate limiting of:
+    - 5 requests per 10 seconds
+    - and 30 requests per min.
+    """
     retries = 0
 
     while retries < max_retries:

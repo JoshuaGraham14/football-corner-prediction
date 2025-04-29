@@ -4,8 +4,11 @@ import hashlib
 
 class ModelRegistry:
     def __init__(self, track_num, selected_features, constructed_features, is_calibration_applied):
+        """
+        Initialises a Model Registry object.
+        """
         os.makedirs("../reports/model_registry", exist_ok=True)
-        self.model_registry_file = f"../reports/model_registry/track{track_num}_results_FINAL.csv"
+        self.model_registry_file = f"../reports/model_registry/track{track_num}_results.csv"
         
         #create the model_registry file if it doesn't exist...
         if not os.path.exists(self.model_registry_file):

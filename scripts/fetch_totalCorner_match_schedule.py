@@ -77,7 +77,7 @@ for _,row in processed_game_data.iterrows():
 
 #--------
 
-def standardize_team_name(league, team_name):
+def standardise_team_name(league, team_name):
     """Returns the standardised team name if mapping exists... Otherwise, returns the orignal."""
     return TEAM_NAME_MAPPING.get(league, {}).get(team_name, team_name)
 
@@ -122,8 +122,8 @@ def fetch_match_schedule(date):
                 match_found = False #flag for if any match was found
 
                 for kaggle_id,(home_team_kaggle, away_team_kaggle) in list(remaining_matches[league_api].items()):
-                    home_team_kaggle=standardize_team_name(league_api, home_team_kaggle)
-                    away_team_kaggle=standardize_team_name(league_api, away_team_kaggle)
+                    home_team_kaggle=standardise_team_name(league_api, home_team_kaggle)
+                    away_team_kaggle=standardise_team_name(league_api, away_team_kaggle)
                     
                     #compare if home and away team are equivelent
                     if (home_team_kaggle == home_team_api) and (away_team_kaggle == away_team_api):

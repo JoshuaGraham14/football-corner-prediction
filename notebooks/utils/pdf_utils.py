@@ -18,18 +18,15 @@ h1, h2, h3, h4, h5, h6 {{
     margin-bottom: 0.5em;
 }}
 h1{{
-    font-size: 2.5em;
+    font-size: 2.4em;
     border-bottom: 2px solid #2c3e50;
     padding-bottom: 0.3em;
 
 }}
 h2{{
-    font-size: 1.7em;
+    font-size: 1.4em;
     border-bottom: 1px solid #2c3e50;
     padding-bottom: 0.2em;
-}}
-h3{{
-    font-size: 1.5em;
 }}
 
 p, pre,table {{
@@ -81,7 +78,18 @@ li{{
 </style>
 """
 
-def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_split_chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train):
+def create_markdown_report(config, track_num, dataset_split_bar_charts_image_path, dataset_split_chronological_image_path, feature_correlation_image_path, point_biserial_correlation_image_path, target_variable, selected_features, constructed_features, models_to_train):
+    """
+    Initialises a 'markdown' string for pdf report saving. 
+
+    This function is responsible for adding the setup info to the pdf. This includes:
+     - Track num
+     - Target variable 
+     - Features
+     - Models
+     - Feature Correlation
+     - Dataset split
+    """
     #Get date for pdf title...
     now = datetime.now()
     date_time_str = now.strftime("%Y-%m-%d, %H:%M")
@@ -102,7 +110,7 @@ def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_
     markdown_content += """
 
 #### {}
-# Model Training Report
+# Model Training Report: Track {}
 
 ## Configuration Details
 #### Target Variable
@@ -134,6 +142,7 @@ def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_
 <div style="page-break-after:always;"></div>
     """.format(
         date_time_str,
+        track_num,
         target_variable,
         ", ".join(selected_features),
         ", ".join(constructed_features),
@@ -147,6 +156,15 @@ def create_markdown_report(config, dataset_split_bar_charts_image_path, dataset_
     return markdown_content
 
 def update_markdown_with_model_details(markdown_content, model_name, feature_importances, best_threshold, classification_report_str_1, classification_report_str_2, classification_report_image_path, roc_prc_image_path, scatter_image_path, backtesting_results_list, backtesting_image_path):
+    """
+    This function is responsible for appending to the markdown string the results from each model pipeline run. This includes:
+     - Feature importance
+     - Confusion matrices
+     - Optimal Threshold
+     - ROC and Precision-Recall Curves
+     - Backtesting results
+    """
+   
     # Convert image paths to base64:
     with open(classification_report_image_path,"rb") as image_file:
         encoded_classification_report_image =base64.b64encode(image_file.read()).decode('utf-8')
@@ -239,6 +257,9 @@ def update_markdown_with_model_details(markdown_content, model_name, feature_imp
     return markdown_content
 
 def append_pdf_with_combined_backtesting_results(markdown_content, backtesting_all_image_path):
+    """
+    This function is responsible for appending to the markdown string the results of the combined backtesting results. 
+    """
     # Convert image paths to base64:
     with open(backtesting_all_image_path,"rb") as image_file:
         encoded_backtesting_all_image =base64.b64encode(image_file.read()).decode('utf-8')
@@ -255,9 +276,15 @@ def append_pdf_with_combined_backtesting_results(markdown_content, backtesting_a
 
     return markdown_content
 
-def save_pdf_from_html(html_content, output_pdf):
-    HTML(string=html_content).write_pdf(output_pdf)
-
 def convert_markdown_to_html(markdown_content):
+    """
+    Converts the markdown string into an HTML file.
+    """
     html_content = markdown.markdown(markdown_content)
     return html_content
+
+def save_pdf_from_html(html_content, output_pdf):
+    """
+    Converts the HTML content into a PDF file and saves it to the specified location.
+    """
+    HTML(string=html_content).write_pdf(output_pdf)

@@ -1,9 +1,5 @@
 """
 ## Plotting Utils 
-
-- `Plot_scatter` - Plot scatter graph to visualise our spread of predictions & how the threshold binarises them. 
-
-- `Plot_roc_and_prc` (calls `plot_roc_curve` and `plot_precision_recall_curve`)
 """
 
 import os
@@ -17,6 +13,9 @@ from scipy.stats import pointbiserialr
 from sklearn.calibration import calibration_curve
 
 def plot_correlation(df_selected, selected_features, constructed_features, target_variables, track_num, show_output=True):
+    """
+    Plots a correlation heatmap between all inputed features and the target variable.
+    """
     #Corelation matrix:
     correlation_matrix = df_selected[selected_features + constructed_features + target_variables].corr()
     correlation_with_target = correlation_matrix[target_variables].drop(target_variables, axis=0).abs()
@@ -43,6 +42,14 @@ def plot_correlation(df_selected, selected_features, constructed_features, targe
     return feature_correlation_image_path
 
 def plot_point_biserial_correlation (df_selected, selected_features, constructed_features, track_num, show_output=True):
+    """
+    Plots a point biserial correlation heatmap between all inputed features and the target variable. Plots:
+    1) Absolute correlation
+    2) P-value (lower value = more statistical significance)
+    3) Combined score (a custom measure which is calcaluted by multiplying Absolute correlation by (1-P_value), hence factoring in both).
+
+    Info: This function is not necessary, as it is very similar to the previous regular correlation func, but its a nice to have, and the P-value can be useful info. 
+    """
     #Calc Point-Biserial correlation and P-values:
     correlation_results = [
         (col, *pointbiserialr(df_selected[col], df_selected['target']))
@@ -82,7 +89,9 @@ def plot_point_biserial_correlation (df_selected, selected_features, constructed
     return point_biserial_correlation_image_path
 
 def plot_calibration_curve(y_true, y_prob, model_name, track_num, show_output=False):
-    """Plots a calibration curve for the inputted model"""
+    """
+    Plots a calibration curve for the inputted model.
+    """
     prob_true, prob_pred = calibration_curve(y_true, y_prob, n_bins=10)
     
     plt.figure(figsize=(8, 6))
@@ -105,6 +114,11 @@ def plot_calibration_curve(y_true, y_prob, model_name, track_num, show_output=Fa
         plt.close()
 
 def plot_prediction_distributions(y_probs_final, y_test_final, model_name, track_num, show_output=True, optimal_threshold=0.5):
+    """
+    Plots two graphs showing the prediction probabilities outputed by the model:
+    1) A scatter plot, showing how predicted probabilities are distributed about the threshold, and how they compare to their true values.
+    2) KDE plot, showing the density of predicted probabilities, split by actual true target.
+    """
     #Split y_probs_final by target = 0 or 1...
     y_probs_class0 = y_probs_final[y_test_final == 0]
     y_probs_class1 = y_probs_final[y_test_final == 1]
@@ -147,7 +161,6 @@ def plot_prediction_distributions(y_probs_final, y_test_final, model_name, track
     ax2.legend()
     plt.tight_layout()
 
-
     # Save graph as an image
     image_path = f"../reports/figures/model_training/track{track_num}/{model_name.replace(' ', '_').lower()}_prediction_distributions.png"
     plt.savefig(image_path)
@@ -160,6 +173,9 @@ def plot_prediction_distributions(y_probs_final, y_test_final, model_name, track
     return image_path #return path for use later in markdwon func
 
 def plot_roc_curve(fpr, tpr, roc_auc, model_name, ax):
+    """
+    Plots an ROC curve, given a fpr (false positive rate) and tpr (true positive rate) .
+    """
     ax.plot(fpr,tpr, color='b',lw=2, label=f'ROC curve (area ={roc_auc:.2f})')
     ax.plot([0,1], [0,1], color='gray', linestyle='--')
     ax.set_xlim([0.0,1.0])
@@ -170,6 +186,9 @@ def plot_roc_curve(fpr, tpr, roc_auc, model_name, ax):
     ax.legend(loc="lower right")
     
 def plot_precision_recall_curve(precision, recall, pr_auc, model_name, ax):
+    """
+    Plots an precision-recall curve, given input precision and recall.
+    """
     ax.plot(recall, precision, color='b', lw=2, label=f'Precision-Recall curve (AUC = {pr_auc:.2f})')
     ax.set_xlabel('Recall')
     ax.set_ylabel('Precision')
@@ -177,7 +196,9 @@ def plot_precision_recall_curve(precision, recall, pr_auc, model_name, ax):
     ax.legend(loc="lower left")
 
 def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, track_num, show_output=True):
-    #Plots ROC curve and Precision-recall side by side
+    """
+    Plots ROC and Precision-recall curves side by side.
+    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))  
     plot_roc_curve(fpr, tpr, roc_auc, model_name,ax1)
     plot_precision_recall_curve(precision, recall, pr_auc, model_name,ax2)
@@ -195,7 +216,10 @@ def plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name, tr
 
     return image_path
 
-def plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, model_name, track_num, show_output=True):
+def plot_confusion_matrices(y_val, y_pred_threshold, y_test, y_pred_final, model_name, track_num, show_output=True):
+    """
+    Plots confusion matrices for both validation and test sets, using ConfusionMatrixDisplay.
+    """
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     #Plot for validation set:
@@ -220,7 +244,12 @@ def plot_classification_report(y_val, y_pred_threshold, y_test, y_pred_final, mo
 
 def plot_dataset_split(train_data, X_val, y_val, test_data, target_variable, track_num, show_output=True):
     """
-    Create visualisation of train/validation/test split
+    Plots the following three visualisation of train/validation/test split:
+    Figure 1:
+        1) Bar chart showing dataset split sizes.
+        2) Bar chart showing distribution of target in each dataset split
+    Figure 2:
+        3) Chronological dataset split distribution (shows both the above).
     """
     BAR_COLOURS=['dodgerblue', 'seagreen', 'indianred']
 
