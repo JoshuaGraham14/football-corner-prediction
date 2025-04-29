@@ -73,8 +73,12 @@ class ModelRegistry:
             'sharpe_ratio': model_results.get('sharpe_ratio', 0),
             'edge_over_bookies': model_results.get('edge', 0)
         }
+
+        #the following two lines fixes NA pandas warning:
+        new_entry_df = pd.DataFrame([new_entry]).dropna(how='all', axis=1)
+        model_registry_df = model_registry_df.dropna(how='all', axis=1)
         
         #Append to model_registry:
-        model_registry_df=pd.concat([model_registry_df, pd.DataFrame([new_entry])], ignore_index=True)
+        model_registry_df=pd.concat([model_registry_df, new_entry_df], ignore_index=True)
         model_registry_df.to_csv(self.model_registry_file, index=False)
     
