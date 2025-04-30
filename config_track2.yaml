@@ -16,29 +16,29 @@ features:
 
     # *** Pre 80 Stats ***
     # - leading_team_shots_pre80
-    - trailing_team_shots_pre80
+    # - trailing_team_shots_pre80
     # - leading_team_fouls_pre80
-    - trailing_team_fouls_pre80
+    # - trailing_team_fouls_pre80
     # - leading_team_corners_pre80
-    - trailing_team_corners_pre80
+    # - trailing_team_corners_pre80
     # - leading_team_yellow_cards_pre80
-    - trailing_team_yellow_cards_pre80
+    # - trailing_team_yellow_cards_pre80
     # - leading_team_sending_off_pre80
-    - trailing_team_sending_off_pre80
+    # - trailing_team_sending_off_pre80
 
     # *** Windowed Stats ***
     - leading_team_corners_70_75
     - trailing_team_corners_70_75
     - leading_team_shots_70_75
     - trailing_team_shots_70_75
-    # - leading_team_fouls_70_75
-    # - trailing_team_fouls_70_75
+    - leading_team_fouls_70_75
+    - trailing_team_fouls_70_75
     - leading_team_corners_75_80
     - trailing_team_corners_75_80
     - leading_team_shots_75_80
     - trailing_team_shots_75_80
-    # - leading_team_fouls_75_80
-    # - trailing_team_fouls_75_80
+    - leading_team_fouls_75_80
+    - trailing_team_fouls_75_80
 
     # *** Total Stats ***
     # - total_shots_pre_80
@@ -64,7 +64,7 @@ features:
     # - league_germany
     # - league_italy
     # - league_france
-    - league_avg_corners
+    # - league_avg_corners
     # - league_avg_home_corners
     # - league_avg_away_corners
 
@@ -75,19 +75,19 @@ features:
     - leading_team_post80_corners_against_avg
 
     # *** Special Technical Indicator Features ***
-    # - odds_ratio
-    # - trailing_team_attack_intensity
-    # - leading_team_attack_intensity
-    # - trailing_team_defensive_pressure
-    # - leading_team_defensive_pressure
-    # - trailing_team_shot_to_corner_ratio_pre_80
-    # - leading_team_shot_to_corner_ratio_pre_80
-    # - trailing_team_aggression_score_pre_80
-    # - leading_team_aggression_score_pre_80
+    - odds_ratio
+    - trailing_team_attack_intensity
+    - leading_team_attack_intensity
+    - trailing_team_defensive_pressure
+    - leading_team_defensive_pressure
+    - trailing_team_shot_to_corner_ratio_pre_80
+    - leading_team_shot_to_corner_ratio_pre_80
+    - trailing_team_aggression_score_pre_80
+    - leading_team_aggression_score_pre_80
     - leading_team_urgency_to_attack
     - trailing_team_urgency_to_attack
-    # - leading_team_momentum_to_attack
-    # - trailing_team_momentum_to_attack
+    - leading_team_momentum_to_attack
+    - trailing_team_momentum_to_attack
     - trailing_team_probability
   target_variable:
     - target

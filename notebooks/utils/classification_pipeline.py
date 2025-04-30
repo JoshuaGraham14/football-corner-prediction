@@ -207,15 +207,15 @@ def run_classification_pipeline(config_file_str, show_output=False, generate_pdf
         roc_prc_image_path = plot_roc_and_prc(fpr, tpr, roc_auc, precision, recall, pr_auc,model_name,track_num=track_num, show_output=show_output)
 
         # --- STEP 9: Save Model ---
-        model_dir = "../models" 
+        model_dir = f"../models/track{track_num}" 
         if not os.path.exists(model_dir): # Ensure the directory exists
             os.makedirs(model_dir)
         # Save the model
-        joblib.dump(optimal_model, os.path.join(model_dir, f"{model_name.replace(' ', '_').lower()}_model.pkl"))
+        joblib.dump(optimal_model, os.path.join(model_dir, f"{model_name.replace(' ', '_').lower()}_model_track{track_num}.pkl"))
         if show_output:
             print(f"{model_name} model saved.")
 
-        prediction_file = f"../data/predictions/track{track_num}/{model_name.replace(' ', '_').lower()}_predictions.csv"
+        prediction_file = f"../data/predictions/track{track_num}/{model_name.replace(' ', '_').lower()}_predictions_track{track_num}.csv"
         # --- STEP 10: Save Predictions ---
         results_df = pd.DataFrame({
             'kaggle_id': test_data['id_odsp'],
