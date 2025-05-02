@@ -5,11 +5,11 @@ venv/
 .env
 
 #All data/image files
-*.csv
-*.png
-*.pdf
-*.pkl
-*.json
+# *.csv
+# *.png
+# *.pdf
+# *.pkl
+# *.json
 
 # Ignore Jupyter notebook checkpoints
 __pycache__/

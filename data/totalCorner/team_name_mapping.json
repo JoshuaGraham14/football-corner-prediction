@@ -1,0 +1,34 @@
+{
+    "Germany Bundesliga I": {
+        "Borussia Monchengladbach": "Borussia M'gladbach",
+        "FC Augsburg": "Augsburg",
+        "FC Cologne": "Cologne",
+        "FC Ingolstadt 04": "FC Ingolstadt",
+        "Hamburg SV": "Hamburg",
+        "SV Darmstadt 98": "Darmstadt",
+        "Schalke 04": "Schalke",
+        "VfL Wolfsburg": "Wolfsburg"
+    },
+    "England Premier League": {
+        "Leicester City": "Leicester",
+        "Manchester City": "Man City",
+        "Manchester Utd": "Man Utd",
+        "Stoke City": "Stoke"
+    },
+    "Spain La Liga": {
+        "Alaves": "CD Alaves"
+    },
+    "Italy Serie A": {
+        "AS Roma": "Roma",
+        "Chievo Verona": "Chievo",
+        "Internazionale": "Inter Milan",
+        "US Pescara": "Pescara"
+    },
+    "France Ligue 1": {
+        "AS Monaco": "Monaco",
+        "AS Nancy Lorraine": "Nancy",
+        "Dijon FCO": "Dijon",
+        "Paris Saint-Germain": "PSG",
+        "Stade Rennes": "Rennes"
+    }
+}
