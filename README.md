@@ -46,6 +46,7 @@ The `reports` directory stores generated outputs from pipeline runs, including:
 - **Figures**: Visualisaations and plots from analysis and model evaluation.
 - **Model Reports**: PDF reports summarising model performance and backtesting results. It also contains the optimal results found, which are presented in the report.
 - **Model Registry Results**: CSVs of results of all trained models across unique pipelines.
+
 The optimal results, including figures, model reports, and backtesting outputs, have been uploaded and saved in these folders for reference. The optimal PDF reports have been saved in the `reports/model_reports/final_reports` folder. Figures and backtesting results have been uploaded and saved across the respective `figures` folders.
 
 ### Models
